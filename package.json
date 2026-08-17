@@ -1,0 +1,10 @@
+{
+  "name": "r4r",
+  "version": "0.1.0",
+  "description": "r4r",
+  "license": "GPL-2.0+",
+  "devDependencies": {
+    "eslint": "~10.8.0",
+    "globals": "^17.0.0"
+  }
+}
