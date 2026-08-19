@@ -23,7 +23,7 @@ urlpatterns = [
     path('stats/', TemplateView.as_view(template_name="stats.html")),
     path('smoketest/', include('smoketest.urls')),
     path('uploads/<str:path>',
-        serve, {'document_root': settings.MEDIA_ROOT}),
+         serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 
 
