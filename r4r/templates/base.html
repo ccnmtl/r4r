@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Ready For Residency: {% block title %}{% endblock %}</title>
+    <title>Ready For Residency{% block title %}{% endblock %}</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -66,7 +66,7 @@
         integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
         crossorigin="anonymous"></script>
 </head>
-<body>
+<body style="height: 100vh;">
 
 <a id="skippy" class="visually-hidden visually-hidden-focusable" href="#content">
     <div class="container">
@@ -76,8 +76,8 @@
 
 <header>
 {% block topnavbar %}
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-    <a class="navbar-brand" href="#" title="Home">ProjectName</a>
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="#" title="Home">Ready For Residency</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -132,11 +132,11 @@
 
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">Banner placeholder</h1>
+            <h1 class="jumbotron-heading">Ready for Residency</h1>
             <!-- Login modal -->
 {% block loginbox %}
 {% if request.user.is_anonymous %}
-            <button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#loginmodal">
+            <button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#loginmodal">
               Log in
             </button>
             <!-- Modal -->

@@ -1,0 +1,8 @@
+FROM public.ecr.aws/docker/library/node:20.19.6-bookworm-slim
+ENV NODE_ENV development
+WORKDIR /src
+COPY package.json /src/
+COPY package-lock.json /src/
+COPY . /src/
+RUN npm i
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,52 @@
+name: build-and-test
+on: [push]
+jobs:
+  django:
+    name: Django tests
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+          python-version: ['3.12']
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Flake8
+        run: make flake8
+      - name: Test
+        run: GITHUB=true make test
+  js:
+    name: JS tests
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v7
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+      - name: Apt Update
+        run: sudo apt-get -qq update
+      - name: Install libgif-dev
+        run: sudo apt-get install -y libgif-dev
+      - name: Install npm modules
+        run: npm install
+      - name: Run eslint
+        run: npm run eslint
+      - name: Test
+        run: npm run test

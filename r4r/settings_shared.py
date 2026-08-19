@@ -13,15 +13,15 @@ PROJECT_APPS = [
 
 USE_TZ = True
 
-if DEBUG:
-    INSTALLED_APPS += [
+if DEBUG:  # noqa
+    INSTALLED_APPS += [  # noqa
         'debug_toolbar',
     ]
-    MIDDLEWARE += [
+    MIDDLEWARE += [  # noqa
         'debug_toolbar.middleware.DebugToolbarMiddleware',
     ]
 
-MIDDLEWARE += [
+MIDDLEWARE += [  # noqa
     'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
@@ -37,3 +37,5 @@ THUMBNAIL_SUBDIR = "thumbs"
 LOGIN_REDIRECT_URL = "/"
 
 ACCOUNT_ACTIVATION_DAYS = 7
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
