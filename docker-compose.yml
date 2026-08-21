@@ -1,34 +1,16 @@
 services:
-  db:
-    container_name: r4r-db
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=r4r
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD", "psql", "-U", "postgres", "r4r"]
-      interval: 1s
-      timeout: 5s
-      retries: 5
-  backend:
-    container_name: r4r-backend
-    build: 
-      context: .
-      dockerfile: Dockerfile.backend
+  web:
+    container_name: r4r
+    build: .
     command: >
-      sh -c "python manage.py migrate --noinput --settings=r4r.settings_docker &&
-             python manage.py runserver --settings=r4r.settings_docker 0.0.0.0:8000"
+      sh -c "python manage.py migrate --noinput --settings=r4r.settings_$LONGENV &&
+             npm ci &&
+             trap 'kill 0' EXIT;
+             python manage.py runserver --settings=r4r.settings_$LONGENV 0.0.0.0:8000 &&
+             npm run dev"
     volumes:
       - .:/src
     ports:
       - "8000:8000"
-    environment:
-      - POSTGRES_NAME=r4r
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    depends_on:
-      db:
-        condition: service_healthy
+    env_file:
+      - .env

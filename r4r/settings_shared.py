@@ -1,9 +1,9 @@
 # Django settings for r4r project.
-import os.path
+from os import path
 from ctlsettings.shared import common
 
 project = 'r4r'
-base = os.path.dirname(__file__)
+base = path.dirname(__file__)
 
 locals().update(common(project=project, base=base))
 
