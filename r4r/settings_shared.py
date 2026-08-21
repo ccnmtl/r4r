@@ -1,9 +1,9 @@
 # Django settings for r4r project.
-import os.path
+from os import environ, path
 from ctlsettings.shared import common
 
 project = 'r4r'
-base = os.path.dirname(__file__)
+base = path.dirname(__file__)
 
 locals().update(common(project=project, base=base))
 
@@ -32,6 +32,17 @@ INSTALLED_APPS += [  # noqa
 
     'r4r.main',
 ]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': environ.get('POSTGRES_HOST'),
+        'NAME': environ.get('POSTGRES_NAME'),
+        'PASSWORD': environ.get('POSTGRES_PASSWORD'),
+        'PORT': environ.get('POSTGRES_PORT'),
+        'USER': environ.get('POSTGRES_USER'),
+    }
+}
 
 THUMBNAIL_SUBDIR = "thumbs"
 LOGIN_REDIRECT_URL = "/"
