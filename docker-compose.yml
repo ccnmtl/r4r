@@ -3,10 +3,10 @@ services:
     container_name: r4r
     build: .
     command: >
-      sh -c "python manage.py migrate --noinput --settings=r4r.settings_$LONGENV &&
+      sh -c "python manage.py migrate --noinput --settings=r4r.settings_$ENV &&
              npm ci &&
              trap 'kill 0' EXIT;
-             python manage.py runserver --settings=r4r.settings_$LONGENV 0.0.0.0:8000 &&
+             python manage.py runserver --settings=r4r.settings_$ENV 0.0.0.0:8000 &&
              npm run dev"
     volumes:
       - .:/src

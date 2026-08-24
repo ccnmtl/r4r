@@ -29,7 +29,7 @@ INSTALLED_APPS += [  # noqa
     'django_bootstrap5',
     'django_extensions',
     'markdownify.apps.MarkdownifyConfig',
-
+    'r4r',
     'r4r.main',
 ]
 
