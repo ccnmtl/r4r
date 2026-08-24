@@ -37,9 +37,9 @@ try {
         checkout scm
         checkoutDir = pwd()
         dbHost = getAwsParameter("/${env.LONGENV}/postgresql/DATABASE_HOST")
-        dbPassword = getAwsParameter("/${env.ENV}/porsgresql/POSTGRES_PASSWORD")
-        dbUser = getAwsParameter("/${env.ENV}postgresql/POSTGRES_USER")
-        dbPort = getAwsParameter("/${env.ENV}postgresql/POSTGRES_PORT")
+        dbPassword = getAwsParameter("/${env.ENV}/porsgresql/DATABASE_PASSWORD")
+        dbUser = getAwsParameter("/${env.ENV}postgresql/DATABASE_USER")
+        dbPort = getAwsParameter("/${env.ENV}postgresql/DATABASE_PORT")
         SENTRY_DSN = getAwsParameter("/r4r/SENTRY_DSN")
         SENTRY_KEY = getAwsParameter("/r4r/SENTRY_KEY")
         stage 'Generate .env file'
