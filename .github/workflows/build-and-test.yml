@@ -1,23 +1,20 @@
 name: build-and-test
 on: [push]
 jobs:
-  django:
-    name: Django tests
+  build:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-          python-version: ['3.12', '3.14']
+          python-version: ["3.14"]
+          node-version: [24.x]
+    name: Node ${{ matrix.node }} run
     services:
       postgres:
-        image: postgres:17
+        image: postgres:16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          POSTGRES_NAME: r4r
         ports:
           - 5432:5432
     steps:
@@ -26,27 +23,15 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Flake8
-        run: make flake8
-      - name: Test
-        run: GITHUB=true make test
-  js:
-    name: JS tests
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v7
-      - name: Setup node
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24.x
-      - name: Apt Update
-        run: sudo apt-get -qq update
-      - name: Install libgif-dev
-        run: sudo apt-get install -y libgif-dev
-      - name: Install npm modules
+      - name: Set up npm
         run: npm install
       - name: Run eslint
         run: npm run eslint
-      - name: Test
-        run: npm run test
+      - name: Run jest
+        run: npm test
+      - name: Run Flake8
+        run: make flake8
+      - name: Django Tests
+        run: make test
+      - name: Build with Makefile
+        run: make all

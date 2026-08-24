@@ -1,13 +1,13 @@
-import os
+from os import environ
 from r4r.settings_shared import *  # noqa: F401,F403
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'NAME': environ.get('POSTGRES_DB'),
+        'USER': environ.get('POSTGRES_USER'),
+        'PASSWORD': environ.get('POSTGRES_PASSWORD'),
         'HOST': 'r4r-db',
-        'PORT': 5432,
+        'PORT': environ.get('POSTGRES_PORT'),
     }
 }

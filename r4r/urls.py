@@ -8,7 +8,6 @@ from r4r.main import views
 
 admin.autodiscover()
 
-
 urlpatterns = [
     path('', views.IndexView.as_view()),
     path('admin/', admin.site.urls),
