@@ -7,12 +7,6 @@ env.TAG = TAG
 // are missing as a side-effect
 
 env.ENV = ENV
-if ( ENV == 'prod') {
-    env.LONGENV = 'production'
-} else {
-    env.LONGENV = env.ENV
-
-}
 env.APP = APP
 env.REPO = REPO
 env.CONFIG_PATH = CONFIG_PATH
@@ -36,10 +30,10 @@ try {
         stage 'Checkout'
         checkout scm
         checkoutDir = pwd()
-        dbHost = getAwsParameter("/${env.LONGENV}/postgresql/DATABASE_HOST")
+        dbHost = getAwsParameter("/${env.ENV}/postgresql/DATABASE_HOST")
         dbPassword = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PASSWORD")
-        dbUser = getAwsParameter("/${env.ENV}postgresql/DATABASE_USER")
-        dbPort = getAwsParameter("/${env.ENV}postgresql/DATABASE_PORT")
+        dbUser = getAwsParameter("/${env.ENV}/postgresql/DATABASE_USER")
+        dbPort = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PORT")
         SENTRY_DSN = getAwsParameter("/r4r/SENTRY_DSN")
         SENTRY_KEY = getAwsParameter("/r4r/SENTRY_KEY")
         stage 'Generate .env file'
@@ -49,7 +43,7 @@ try {
             echo POSTGRES_HOST=${dbHost} >> .env
             echo POSTGRES_USER=${dbUser} >> .env
             echo POSTGRES_PASSWORD=${dbPassword} >> .env
-            echo POSTGRES_DB=${dbDbName} >> .env
+            echo POSTGRES_DB=${APP} >> .env
             echo POSTGRES_PORT=${dbPort} >> .env
             echo CONFIG_PATH=${env.CONFIG_PATH} >> .env
             echo SENTRY_DSN=${SENTRY_DSN} >> .env
