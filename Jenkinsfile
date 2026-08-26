@@ -36,35 +36,32 @@ try {
         dbPort = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PORT")
         SENTRY_DSN = getAwsParameter("/r4r/SENTRY_DSN")
         SENTRY_KEY = getAwsParameter("/r4r/SENTRY_KEY")
-        stage('Build') {
-            steps {
-                echo 'Generate .env file'
-                sh """
-                    echo TAG=${env.TAG} > .env
-                    echo ENV=${env.ENV} >> .env
-                    echo POSTGRES_HOST=${dbHost} >> .env
-                    echo POSTGRES_USER=${dbUser} >> .env
-                    echo POSTGRES_PASSWORD=${dbPassword} >> .env
-                    echo POSTGRES_DB=${APP} >> .env
-                    echo POSTGRES_PORT=${dbPort} >> .env
-                    echo CONFIG_PATH=${env.CONFIG_PATH} >> .env
-                    echo SENTRY_DSN=${SENTRY_DSN} >> .env
-                    echo SENTRY_KEY=${SENTRY_KEY} >> .env
-                """
 
-                echo "Copy files to host"
-                sh """
-                    rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/.env ${server_host}:/var/www/${APP}/.env
-                    rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/* ${server_host}:/var/www/${APP}/
-                """
+        stage 'Generate .env file'
+        sh """
+            echo TAG=${env.TAG} > .env
+            echo ENV=${env.ENV} >> .env
+            echo POSTGRES_HOST=${dbHost} >> .env
+            echo POSTGRES_USER=${dbUser} >> .env
+            echo POSTGRES_PASSWORD=${dbPassword} >> .env
+            echo POSTGRES_DB=${APP} >> .env
+            echo POSTGRES_PORT=${dbPort} >> .env
+            echo CONFIG_PATH=${env.CONFIG_PATH} >> .env
+            echo SENTRY_DSN=${SENTRY_DSN} >> .env
+            echo SENTRY_KEY=${SENTRY_KEY} >> .env
+        """
 
-                echo "Restart Docker compose"
-                sh """
-                    ssh ${server_host} "cd /var/www/${APP} && docker compose down || true"
-                    ssh ${server_host} "cd /var/www/${APP} && docker compose up -d"
-                """
-            }
-        }
+        stage "Copy files to host"
+        sh """
+            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/.env ${server_host}:/var/www/${APP}/.env
+            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/* ${server_host}:/var/www/${APP}/
+        """
+
+        stage "Restart Docker compose"
+        sh """
+            ssh ${server_host} "cd /var/www/${APP} && docker compose down || true"
+            ssh ${server_host} "cd /var/www/${APP} && docker compose up -d"
+        """
 
     }
 
