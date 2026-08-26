@@ -51,10 +51,16 @@ try {
         """
 
         stage "Copy files to host"
-        copy_files_to_host(server_host, checkoutDir)
+        sh """
+            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/.env ${host}:/var/www/${APP}/.env
+            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/* ${host}:/var/www/${APP}/
+        """
 
         stage "Restart Docker compose"
-        restart_docker_compose(server_host)
+        sh """
+            ssh ${host} "cd /var/www/${APP} && docker compose down || true"
+            ssh ${host} "cd /var/www/${APP} && docker compose up -d"
+        """
     }
 
 } catch (caughtError) {
@@ -103,30 +109,6 @@ def notifyBuild(String buildStatus = 'STARTED') {
     //         notifyEveryUnstableBuild: true,
     //         recipients: ADMIN_EMAIL,
     //         sendToIndividuals: true])
-}
-
-def copy_files_to_host(String host, String checkoutDir) {
-    cmd = {
-        node {
-            sh """
-            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/.env ${host}:/var/www/${APP}/.env
-            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/* ${host}:/var/www/${APP}/
-            """
-        }
-    }
-    return cmd
-}
-
-def restart_docker_compose(String host) {
-    cmd = {
-        node {
-            sh """
-            ssh ${host} "cd /var/www/${APP} && docker compose down || true"
-            ssh ${host} "cd /var/www/${APP} && docker compose up -d"
-            """
-        }
-    }
-    return cmd
 }
 
 def getAwsParameter(String name) {
