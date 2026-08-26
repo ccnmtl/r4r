@@ -51,10 +51,10 @@ try {
         """
 
         stage "Copy files to host"
-        copy_files_to_host(server_hosts, checkoutDir)
+        copy_files_to_host(server_host, checkoutDir)
 
         stage "Restart Docker compose"
-        restart_docker_compose(server_hosts)
+        restart_docker_compose(server_host)
     }
 
 } catch (caughtError) {
