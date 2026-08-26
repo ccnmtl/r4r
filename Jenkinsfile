@@ -109,8 +109,8 @@ def copy_files_to_host(String host, String checkoutDir) {
     cmd = {
         node {
             sh """
-            scp -r ${checkoutDir}/.env ${host}:/var/www/${APP}/.env
-            scp -r ${checkoutDir}/* ${host}:/var/www/${APP}
+            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/.env ${host}:/var/www/${APP}/.env
+            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/* ${host}:/var/www/${APP}/
             """
         }
     }
