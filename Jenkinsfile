@@ -36,36 +36,32 @@ try {
         dbPort = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PORT")
         SENTRY_DSN = getAwsParameter("/r4r/SENTRY_DSN")
         SENTRY_KEY = getAwsParameter("/r4r/SENTRY_KEY")
-        stage('Build') {
-            steps {
-                echo 'Generate .env file'
-                sh """
-                    echo TAG=${env.TAG} > .env
-                    echo ENV=${env.ENV} >> .env
-                    echo POSTGRES_HOST=${dbHost} >> .env
-                    echo POSTGRES_USER=${dbUser} >> .env
-                    echo POSTGRES_PASSWORD=${dbPassword} >> .env
-                    echo POSTGRES_DB=${APP} >> .env
-                    echo POSTGRES_PORT=${dbPort} >> .env
-                    echo CONFIG_PATH=${env.CONFIG_PATH} >> .env
-                    echo SENTRY_DSN=${SENTRY_DSN} >> .env
-                    echo SENTRY_KEY=${SENTRY_KEY} >> .env
-                """
+        stage 'Generate .env file'
+        sh """
+            echo TAG=${env.TAG} > .env
+            echo ENV=${env.ENV} >> .env
+            echo POSTGRES_HOST=${dbHost} >> .env
+            echo POSTGRES_USER=${dbUser} >> .env
+            echo POSTGRES_PASSWORD=${dbPassword} >> .env
+            echo POSTGRES_DB=${APP} >> .env
+            echo POSTGRES_PORT=${dbPort} >> .env
+            echo CONFIG_PATH=${env.CONFIG_PATH} >> .env
+            echo SENTRY_DSN=${SENTRY_DSN} >> .env
+            echo SENTRY_KEY=${SENTRY_KEY} >> .env
+        """
+        def branches = [:]
+        stage "Copy files to host"
 
-                echo "Copy files to host"
-                sh """
-                    rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/.env ${host}:/var/www/${APP}/.env
-                    rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/* ${host}:/var/www/${APP}/
-                """
-
-                echo "Restart Docker compose"
-                sh """
-                    ssh ${host} "cd /var/www/${APP} && docker compose down || true"
-                    ssh ${host} "cd /var/www/${APP} && docker compose up -d"
-                """
-            }
+        for (int i = 0; i < server_hosts.size(); i++) {
+            branches["copy-files-to-host-${i}"] = copy_files_to_host(i, server_hosts[i], checkoutDir)
         }
-
+        parallel branches
+        stage "Restart Docker compose"
+        branches = [:]
+        for (int i = 0; i < server_hosts.size(); i++) {
+            branches["docker-compose-${i}"] = restart_docker_compose(i, server_hosts[i])
+        }
+        parallel branches
     }
 
 } catch (caughtError) {
@@ -114,6 +110,30 @@ def notifyBuild(String buildStatus = 'STARTED') {
     //         notifyEveryUnstableBuild: true,
     //         recipients: ADMIN_EMAIL,
     //         sendToIndividuals: true])
+}
+
+def copy_files_to_host(String host, String checkoutDir) {
+    cmd = {
+        node {
+            sh """
+            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/.env ${host}:/var/www/${APP}/.env
+            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/* ${host}:/var/www/${APP}/
+            """
+        }
+    }
+    return cmd
+}
+
+def restart_docker_compose(String host) {
+    cmd = {
+        node {
+            sh """
+            ssh ${host} "cd /var/www/${APP} && docker compose down || true"
+            ssh ${host} "cd /var/www/${APP} && docker compose up -d"
+            """
+        }
+    }
+    return cmd
 }
 
 def getAwsParameter(String name) {
