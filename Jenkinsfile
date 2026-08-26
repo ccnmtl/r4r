@@ -11,7 +11,7 @@ env.APP = APP
 env.REPO = REPO
 env.CONFIG_PATH = CONFIG_PATH
 
-def server_hosts = EC2_HOSTS.split(" ")
+def server_host = EC2_HOSTS
 def checkoutDir
 def dbHost
 def dbUser
@@ -49,19 +49,12 @@ try {
             echo SENTRY_DSN=${SENTRY_DSN} >> .env
             echo SENTRY_KEY=${SENTRY_KEY} >> .env
         """
-        def branches = [:]
-        stage "Copy files to host"
 
-        for (int i = 0; i < server_hosts.size(); i++) {
-            branches["copy-files-to-host-${i}"] = copy_files_to_host(i, server_hosts[i], checkoutDir)
-        }
-        parallel branches
+        stage "Copy files to host"
+        copy_files_to_host(server_hosts, checkoutDir)
+
         stage "Restart Docker compose"
-        branches = [:]
-        for (int i = 0; i < server_hosts.size(); i++) {
-            branches["docker-compose-${i}"] = restart_docker_compose(i, server_hosts[i])
-        }
-        parallel branches
+        restart_docker_compose(server_hosts)
     }
 
 } catch (caughtError) {
@@ -112,7 +105,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
     //         sendToIndividuals: true])
 }
 
-def copy_files_to_host(int i, String host, String checkoutDir) {
+def copy_files_to_host(String host, String checkoutDir) {
     cmd = {
         node {
             sh """
@@ -124,7 +117,7 @@ def copy_files_to_host(int i, String host, String checkoutDir) {
     return cmd
 }
 
-def restart_docker_compose(int i, String host) {
+def restart_docker_compose(String host) {
     cmd = {
         node {
             sh """
