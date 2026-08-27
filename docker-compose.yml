@@ -6,11 +6,11 @@ services:
       sh -c "python manage.py migrate --noinput --settings=r4r.settings_$ENV &&
              npm ci &&
              trap 'kill 0' EXIT;
-             python manage.py runserver --settings=r4r.settings_$ENV 0.0.0.0:8000 &&
+             python manage.py runserver --settings=r4r.settings_$ENV 0.0.0.0:$PORT &&
              npm run dev"
     volumes:
       - .:/src
     ports:
-      - "8000:8000"
+      - "$PORT:$PORT"
     env_file:
       - .env
