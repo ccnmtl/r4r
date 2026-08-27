@@ -13,6 +13,7 @@ env.CONFIG_PATH = CONFIG_PATH
 
 def server_host = EC2_HOSTS
 def checkoutDir
+def port
 def dbHost
 def dbUser
 def dbPassword
@@ -30,6 +31,7 @@ try {
         stage 'Checkout'
         checkout scm
         checkoutDir = pwd()
+        port = getAwsParameter("/r4r/PORT")
         dbHost = getAwsParameter("/${env.ENV}/postgresql/DATABASE_HOST")
         dbPassword = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PASSWORD")
         dbUser = getAwsParameter("/${env.ENV}/postgresql/DATABASE_USER")
@@ -41,6 +43,7 @@ try {
         sh """
             echo TAG=${env.TAG} > .env
             echo ENV=${env.ENV} >> .env
+            echo PORT=${port}
             echo POSTGRES_HOST=${dbHost} >> .env
             echo POSTGRES_USER=${dbUser} >> .env
             echo POSTGRES_PASSWORD=${dbPassword} >> .env
