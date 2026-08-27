@@ -1,9 +1,10 @@
 # Django settings for r4r project.
-from os import path
+import os
 from ctlsettings.shared import common
+from logging import FileHandler
 
 project = 'r4r'
-base = path.dirname(__file__)
+base = os.path.dirname(__file__)
 
 locals().update(common(project=project, base=base))
 
@@ -32,6 +33,28 @@ INSTALLED_APPS += [  # noqa
     'r4r',
     'r4r.main',
 ]
+
+if os.environ.get('GITHUB'):
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {message}',
+                'style': '{',
+            },
+        },
+        "handlers": {
+            "file": {
+                "class": FileHandler,
+                "filename": 'logs/r4r.log'
+            }
+        }
+    }
 
 THUMBNAIL_SUBDIR = "thumbs"
 LOGIN_REDIRECT_URL = "/"

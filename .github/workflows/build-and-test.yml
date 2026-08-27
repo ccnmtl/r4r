@@ -29,9 +29,5 @@ jobs:
         run: npm run eslint
       - name: Run jest
         run: npm test
-      - name: Run Flake8
-        run: make flake8
-      - name: Django Tests
-        run: make test
-      - name: Build with Makefile
-        run: make all
+      - name: Run Jenkins checks
+        run: GITHUB=true make jenkins
