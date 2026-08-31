@@ -10,6 +10,7 @@ services:
              npm run dev"
     volumes:
       - .:/src
+      - /var/log/django/r4r.log:/var/log/django/r4r.log
     ports:
       - "$PORT:$PORT"
     env_file:
