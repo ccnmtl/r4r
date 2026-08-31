@@ -43,7 +43,7 @@ try {
         sh """
             echo TAG=${env.TAG} > .env
             echo ENV=${env.ENV} >> .env
-            echo PORT=${port}
+            echo PORT=${port} >> .env
             echo POSTGRES_HOST=${dbHost} >> .env
             echo POSTGRES_USER=${dbUser} >> .env
             echo POSTGRES_PASSWORD=${dbPassword} >> .env
