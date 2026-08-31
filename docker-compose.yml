@@ -11,6 +11,7 @@ services:
     volumes:
       - .:/src
       - /var/log/django/r4r.log:/var/log/django/r4r.log
+      - ./local_settings.py:/src/r4r/local_settings.py
     ports:
       - "$PORT:$PORT"
     env_file:
