@@ -2,7 +2,6 @@ import eslint from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import globals from 'globals';
-import cypress from 'eslint-plugin-cypress';
 import stylistic from '@stylistic/eslint-plugin';
 
 export default defineConfig([
@@ -13,7 +12,6 @@ export default defineConfig([
         files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
         plugins: {
             '@stylistic': stylistic,
-            cypress
         },
         languageOptions: {
             globals: {
@@ -55,14 +53,8 @@ export default defineConfig([
                     beforeColon: false,
                 },
             ],
-            "func-call-spacing": ["error", "never"],
+            'func-call-spacing': ['error', 'never'],
 
-            "cypress/assertion-before-screenshot": "warn",
-            "cypress/no-unnecessary-waiting": "warn",
-            "cypress/no-assigning-return-values": "error",
-            "cypress/no-force": "warn",
-            "cypress/no-pause": "error",
-            "cypress/no-async-tests": "error",
         },
     }
 ]);
