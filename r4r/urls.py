@@ -8,6 +8,12 @@ from r4r.main import views
 
 admin.autodiscover()
 
+
+def trigger_error(request):
+    division_by_zero = 1 / 0
+    print(division_by_zero)
+
+
 urlpatterns = [
     path('', views.IndexView.as_view()),
     path('admin/', admin.site.urls),
@@ -23,6 +29,7 @@ urlpatterns = [
     path('smoketest/', include('smoketest.urls')),
     path('uploads/<str:path>',
          serve, {'document_root': settings.MEDIA_ROOT}),
+    path('sentry-debug/', trigger_error)
 ]
 
 
