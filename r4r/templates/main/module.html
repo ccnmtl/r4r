@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div id="course-list">
+    <ul class="list-group">
+    {% if self.object.head %}
+        {% while %}
+            <li class="list-group-item">{{course.title}}</li>
+    {% else %}
+        <li class="list-group-item">
+            <em>There are no modules yet</em>
+        </li>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -31,7 +31,17 @@ INSTALLED_APPS += [  # noqa
     'markdownify.apps.MarkdownifyConfig',
     'r4r',
     'r4r.main',
+    'rest_framework'
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS":
+        "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
 
 THUMBNAIL_SUBDIR = "thumbs"
 LOGIN_REDIRECT_URL = "/"

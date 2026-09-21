@@ -59,6 +59,23 @@
     <link rel="icon" href="{{STATIC_URL}}img/favicon.ico">
     <link rel="icon" type="image/png" href="{{STATIC_URL}}img/favicon.png">
 
+    <meta id="csrf-token" name="csrf-token" content="{{csrf_token}}">
+    <script>
+            window.r4r = {
+                staticUrl: '{{ STATIC_URL }}',
+                baseUrl: '//{{ request.get_host }}',
+                {% if not request.user.is_anonymous %}
+                currentUser: {
+                    id: {{ request.user.id }},
+                    username: '{{ request.user.username }}',
+                    email: '{{ request.user.email }}',
+                    is_superuser: {{ request.user.is_superuser|yesno:"true,false" }},
+                    is_staff: {{ request.user.is_staff|yesno:"true,false" }},
+                },
+                {% endif %}
+            }
+        </script>
+
     {% block feeds %}{% endblock %}
 
     <script
@@ -77,20 +94,20 @@
 <header>
 {% block topnavbar %}
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark px-4">
-    <a class="navbar-brand" href="#" title="Home">Ready For Residency</a>
+    <a class="navbar-brand" href="/" title="Home">Ready For Residency</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="topNavbar">
-        <ul class="navbar-nav mr-auto">
+        {% comment %} <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" href="#" title="Home">Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" title="Link">Link</a>
             </li>
-        </ul>
+        </ul> {% endcomment %}
     </div>
 
     {% block usernav %}
@@ -129,79 +146,6 @@
 
 
 <main role="main" class="pb-4">
-
-    <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">Ready for Residency</h1>
-            <!-- Login modal -->
-{% block loginbox %}
-{% if request.user.is_anonymous %}
-            <button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#loginmodal">
-              Log in
-            </button>
-            <!-- Modal -->
-            <div class="modal fade" id="loginmodal" tabindex="-1" role="dialog" aria-labelledby="LoginModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="LoginModalLabel">Choose a log in option</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    {% if CAS_BASE %}
-                        <form method="get" action="{{ CAS_BASE }}cas/login">
-                        {% csrf_token %}
-                        <input type="hidden" name="destination" value="https://{{ request.get_host }}/accounts/caslogin/?next=" />
-                        <h6>If you have a Columbia University Network ID (UNI)...</h6>
-                        <input class="btn btn-primary" type="submit" value="Columbia Log In" />
-                        </form>
-                    {% endif %}
-                    <p class="mt-2"><a href="http://cuit.columbia.edu/cuit/manage-my-uni" title="Learn more about UNI" target="_blank">What is a UNI?</a></p>
-                    <!-- End UNI LOG IN -->
-                    {% if login_form.errors %}
-                    <p class="text-danger">
-                        <span>
-                            <b>ERROR:</b> Invalid username or password.
-                        </span>
-                        Please try again. Note that both username and password are case-sensitive.
-                    </p>
-                    {% endif %}
-                    <hr />
-                    <h6>If you have a guest account...</h6>
-                    <form id="login-local" name="login_local" method="post" action="/accounts/login/">
-                        {% csrf_token %}
-                        <div class="login-local-form" {% if not login_form.errors %}style="display: none"{% endif %}>
-                            <div class="form-group">
-                                <label for="id_username">Username:</label>
-                                {{ login_form.username }}
-                            </div><!-- form-group -->
-
-                            <div class="form-group">
-                                <label for="id_password">Password:</label>
-                                {{ login_form.password }}
-                            </div><!-- form-group -->
-                        </div>
-                        <input class="btn btn-primary" type="button" value="Guest Log In" {% if login_form.errors %}style="display: none"{% endif %}
-                            onclick="jQuery('.login-local-form').show(); jQuery(this).hide(); return false;"/>
-                        <input class="btn btn-primary login-local-form" type="submit" value="Log In" {% if not login_form.errors %}style="display: none;"{% endif %} />
-                        <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                    </form>
-                    <p class="mt-2"><a href="/registration/register/" title="Create your new project account">Need a new account?</a></p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-{% endif %}
-{% endblock %}
-
-        </div>
-    </section>
-
     <section id="content">
         <div class="container">
         {% block pagetitle %}{% endblock %}

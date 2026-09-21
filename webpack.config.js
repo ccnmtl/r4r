@@ -1,3 +1,4 @@
+// eslint-n
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -10,7 +11,7 @@ module.exports = {
         publicPath: '/media/build/'
     },
     resolve: {
-        extensions: ['*', '.ts', '.tsx', '.js']
+        extensions: ['.tsx', '.ts', '.jsx', '.js']
     },
     module: {
         rules: [
@@ -21,14 +22,17 @@ module.exports = {
                 },
             },
             {
-                test: /\.(tsx|ts|js)$/,
+                test: /\.(tsx|jsx|ts$|js$)/,
                 include: path.resolve(__dirname, 'media/js/src'),
                 exclude: /node_modules/,
                 use: [
                     {
                         loader: 'babel-loader',
                         options: {
-                            presets: ['@babel/preset-env', '@babel/preset-react']  // eslint-disable-line max-len
+                            presets: [
+                                '@babel/preset-env',
+                                '@babel/preset-react',
+                                '@babel/preset-typescript']
                         }
                     },
                     {
@@ -48,17 +52,6 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            sourceMap: true,
-                        }
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            postcssOptions: {
-                                plugins: [
-                                    'autoprefixer'
-                                ]
-                            },
                             sourceMap: true,
                         }
                     },
