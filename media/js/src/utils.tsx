@@ -1,4 +1,7 @@
+import axios from 'axios';
 import { ReactNode } from 'react';
+import { COURSEWORKS_API } from './local';
+
 
 export interface CourseProps {
     code: string
@@ -19,13 +22,21 @@ export interface UserProps {
     id: number
     username: string | undefined
     email: string | undefined
-}
+};
 
 
 export interface TeamProps {
     course_id: number
     members: UserProps[]
-}
+};
 
 
 export const authUser = window.r4r.currentUser;
+
+
+export const importRoster = async(courseId:number) => {
+    return await axios.get(
+        `https://courseworks2.columbia.edu/api/v1/course/${courseId}/users
+        ?per_page=1000`,{headers: {
+            Authorization: `Bearer ${COURSEWORKS_API}`}});
+};
