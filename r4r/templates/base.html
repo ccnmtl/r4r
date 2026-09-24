@@ -145,41 +145,8 @@
 
 
 
-<main role="main" class="pb-4">
-    <section id="content">
-        <div class="container">
-        {% block pagetitle %}{% endblock %}
-        {% block content %}{% endblock %}
-        </div>
-    </section>
-
-</main>
-
-<footer class="bg-light text-dark pt-2 pb-5">
-    <ul class="nav d-flex justify-content-center">
-        <li class="nav-item">
-            <a class="nav-link" href="#" title="About">About</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#" title="Help">Help</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#" title="Contact">Contact</a>
-        </li>
-    </ul>
-
-    <span itemscope itemtype="http://schema.org/EducationalOrganization">
-        <div class="text-center">
-            <a href="https://ctl.columbia.edu" target="_blank" itemprop="url" title="Center for Teaching and Learning at Columbia University" class="d-inline-block">
-                <img src="{{STATIC_URL}}img/logo-ctl-color.png" class="mx-auto d-block mt-3" alt="" itemprop="logo" width="290" />
-                <span class="visually-hidden" itemprop="name">
-                    Center for Teaching and Learning at Columbia University
-                </span>
-            </a>
-        </div>
-    </span>
-
-</footer>
+{% block pagetitle %}{% endblock %}
+{% block content %}{% endblock %}
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
