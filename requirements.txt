@@ -90,3 +90,7 @@ bleach==6.4.0 # django-markdownify
 django-markdownify==0.9.7
 
 typing_extensions==4.16.0
+
+uritemplate==4.2.0 # drf-spectacular
+inflection==0.5.1 # drf-spectacular
+drf-spectacular==0.30.0

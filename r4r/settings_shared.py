@@ -31,7 +31,8 @@ INSTALLED_APPS += [  # noqa
     'markdownify.apps.MarkdownifyConfig',
     'r4r',
     'r4r.main',
-    'rest_framework'
+    'rest_framework',
+    'drf_spectacular'
 ]
 
 REST_FRAMEWORK = {
@@ -40,7 +41,18 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10,
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Ready for Residency',
+    'DESCRIPTION': 'A Columbia run Provost-funded project initiated by \
+        Dr. Trudi Cloyd and managed by Columbia\'s Center for \
+            Teaching and Learning',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
 
 THUMBNAIL_SUBDIR = "thumbs"
