@@ -7,12 +7,12 @@ locals().update(
     common(
         project=project,  # noqa: F405
         base=base,  # noqa: F405
-        STATIC_ROOT='/var/www/r4r/media/',  # noqa: F405
+        STATIC_ROOT=STATIC_ROOT,  # noqa: F405
         INSTALLED_APPS=INSTALLED_APPS,  # noqa: F405
         # if you use cloudfront:
         #        cloudfront="justtheidhere",
         # if you don't use S3/cloudfront at all:
-        s3static=False,
+        #       s3static=False,
     ))
 
 
