@@ -38,8 +38,6 @@ try {
         dbPort = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PORT")
         SENTRY_DSN = getAwsParameter("/r4r/SENTRY_DSN")
         SENTRY_KEY = getAwsParameter("/r4r/SENTRY_KEY")
-        ACCESS_KEY = getAwsParameter("/production/AWS_ACCESS_KEY_ID")
-        SECRET_KEY = getAwsParameter("/production/AWS_SECRET_ACCESS_KEY")
 
         stage 'Generate .env file'
         sh """
@@ -55,8 +53,6 @@ try {
             echo POSTGRES_PORT=${dbPort} >> .env
             echo SENTRY_DSN=${SENTRY_DSN} >> .env
             echo SENTRY_KEY=${SENTRY_KEY} >> .env
-            echo ACCESS_KEY=${ACCESS_KEY} >> .env
-            echo SECERT_KEY=${SECRET_KEY} >> .env
             set -x
         """
 
