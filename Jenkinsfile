@@ -38,20 +38,26 @@ try {
         dbPort = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PORT")
         SENTRY_DSN = getAwsParameter("/r4r/SENTRY_DSN")
         SENTRY_KEY = getAwsParameter("/r4r/SENTRY_KEY")
+        ACCESS_KEY = getAwsParameter("/production/AWS_ACCESS_KEY_ID")
+        SECRET_KEY = getAwsParameter("/production/AWS_SECRET_ACCESS_KEY")
 
         stage 'Generate .env file'
         sh """
             echo TAG=${env.TAG} > .env
             echo ENV=${env.ENV} >> .env
             echo PORT=${port} >> .env
+            echo CONFIG_PATH=${env.CONFIG_PATH} >> .env
+            set +x
             echo POSTGRES_HOST=${dbHost} >> .env
             echo POSTGRES_USER=${dbUser} >> .env
             echo POSTGRES_PASSWORD=${dbPassword} >> .env
             echo POSTGRES_DB=${APP} >> .env
             echo POSTGRES_PORT=${dbPort} >> .env
-            echo CONFIG_PATH=${env.CONFIG_PATH} >> .env
             echo SENTRY_DSN=${SENTRY_DSN} >> .env
             echo SENTRY_KEY=${SENTRY_KEY} >> .env
+            echo ACCESS_KEY=${SENTRY_KEY} >> .env
+            echo SECERT_KEY=${SENTRY_KEY} >> .env
+            set -x
         """
 
         stage "Copy files to host"
