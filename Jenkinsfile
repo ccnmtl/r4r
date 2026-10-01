@@ -55,8 +55,8 @@ try {
             echo POSTGRES_PORT=${dbPort} >> .env
             echo SENTRY_DSN=${SENTRY_DSN} >> .env
             echo SENTRY_KEY=${SENTRY_KEY} >> .env
-            echo ACCESS_KEY=${SENTRY_KEY} >> .env
-            echo SECERT_KEY=${SENTRY_KEY} >> .env
+            echo ACCESS_KEY=${ACCESS_KEY} >> .env
+            echo SECERT_KEY=${SECRET_KEY} >> .env
             set -x
         """
 
