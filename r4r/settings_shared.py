@@ -1,5 +1,6 @@
 # Django settings for r4r project.
-from os import path
+import sys
+from os import path, getenv
 from ctlsettings.shared import common
 
 project = 'r4r'
@@ -42,6 +43,39 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+if not ('test' in sys.argv or 'jenkins' in sys.argv):
+    AWS_ACCESS_KEY = getenv('AWS_ACCESS_KEY')
+    AWS_SECRET_KEY = getenv('AWS_SECRET_KEY')
+    AWS_ACCESS_KEY_ID = getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = getenv('AWS_SECRET_ACCESS_KEY')
+
+    S3_MEDIA_BUCKET_NAME = 'ctl-r4r-static-stage'
+
+    EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+    EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
+    EMAIL_PORT = 465
+    EMAIL_HOST_USER = getenv('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD')
+    EMAIL_USE_TLS = True
+
+    SENTRY_DSN = getenv('SENTRY-DSN')
+    SENTRY_KEY = getenv('SENTRY-KEY')
+
+    DATABASES = {
+        'default': {
+            'ENGINE': getenv('POSTGRES_ENGINE'),
+            'HOST': getenv('POSTGRES_HOST'),
+            'NAME': getenv('POSTGRES_NAME'),
+            'PASSWORD': getenv('POSTGRES_PASSWORD'),
+            'PORT': getenv('POSTGRES_PORT'),
+            'USER': getenv('POSTGRES_USER'),
+        }
+    }
+
+
+# Team count is constant throughout a given course
+TEAM_COUNT = 12
 
 THUMBNAIL_SUBDIR = "thumbs"
 LOGIN_REDIRECT_URL = "/"
