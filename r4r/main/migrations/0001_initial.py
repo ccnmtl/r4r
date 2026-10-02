@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('form', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='main.form')),
-                ('next', models.ForeignKey(null=True, on_delete=r4r.main.models.Page.get_next, to='main.page')),
+                ('next', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='main.page')),
             ],
         ),
         migrations.CreateModel(
@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='course',
             name='head',
-            field=models.ForeignKey(null=True, on_delete=r4r.main.models.Course.get_head, to='main.page'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='main.page'),
         ),
         migrations.CreateModel(
             name='Post',
