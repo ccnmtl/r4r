@@ -1,55 +1,72 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import ArrayField
 
 
-class Form(models.Model):
-    questions = ArrayField(models.TextField(default=''))
-
-
-class Page(models.Model):
-    def get_next(self):
-        self.next = self.next.next
-        self.save()
-
-    form = models.ForeignKey(Form, null=True, on_delete=models.SET_NULL)
+class LinkedModel(models.Model):
+    head = None
     next = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
 
 
-class Course(models.Model):
-    def get_head(self):
-        self.head = self.head.next
-        self.save()
+class Form(models.Model):
+    prompt = models.TextField(null=True)
+    media_url = models.TextField(null=True)
 
+
+class Task(LinkedModel):
+    details = models.TextField(default='')
+    form = models.ForeignKey(Form, null=True, on_delete=models.SET_NULL)
+    release_date = models.DateTimeField(auto_now_add=True)
+
+
+class Day(LinkedModel):
+    details = models.TextField(default='')
+    head = models.ForeignKey(Task, null=True, on_delete=models.SET_NULL)
+    title = models.CharField(max_length=256, null=True)
+
+
+class Case(LinkedModel):
+    head = models.ForeignKey(Task, null=True, on_delete=models.SET_NULL)
+    title = models.CharField(max_length=256, null=True)
+
+
+class Course(models.Model):
     def get_instructors(self):
         return self.object.roster.filter(is_staff=True)
 
+    code = models.CharField(max_length=256, default='', unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     details = models.TextField(default='')
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
+    instructors = models.ManyToManyField(User, related_name='instructors')
     roster = models.ManyToManyField(User)
     title = models.CharField(max_length=256)
-    code = models.TextField(default='', unique=True)  # Ex: 2026-F-[course#]
-    head = models.ForeignKey(Page, on_delete=models.SET_NULL, null=True)
+
+
+class Rotation(LinkedModel):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    head = models.ForeignKey(Case, null=True, on_delete=models.SET_NULL)
+    title = models.CharField(max_length=256)
 
 
 class Team(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     members = models.ManyToManyField(User)
-
-
-class Post(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
-    text = models.TextField(default='')
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_edited = models.BooleanField(default=False)
-    is_draft = models.BooleanField(default=True)
+    leader = models.ForeignKey(
+        User, null=True, on_delete=models.SET_NULL, related_name='leader')
 
 
 class Forum(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, null=True, on_delete=models.CASCADE)
     question = models.TextField()
-    page = models.ForeignKey(Page, on_delete=models.CASCADE)
+    day = models.ForeignKey(Day, null=True, on_delete=models.CASCADE)
+
+
+class Post(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    forum = models.ForeignKey(Forum, null=True, on_delete=models.CASCADE)
+    is_draft = models.BooleanField(default=True)
+    is_edited = models.BooleanField(default=False)
+    parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
+    text = models.TextField(default='')
+    user = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
