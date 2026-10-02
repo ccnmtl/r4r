@@ -1,14 +1,35 @@
 import { ReactNode } from 'react';
 
+export interface TaskProps {
+    details: string
+}
+
+interface DayProps {
+    details: string
+    tasks: TaskProps[]
+    title: string
+}
+
+export interface CaseProps {
+    title:string
+    days: DayProps[]
+}
+
+export interface RotationProps {
+    title: string
+    cases: CaseProps[]
+}
+
 export interface CourseProps {
     code: string
+    created_at: Date
     details: string | ReactNode
     id: number
+    is_active: boolean
+    rotations: RotationProps[]
     title: string
     url: string
-    is_active: boolean
-    created_at: Date
-};
+}
 
 
 export interface UserProps {
