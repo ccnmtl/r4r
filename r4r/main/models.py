@@ -14,7 +14,7 @@ class Page(models.Model):
         self.save()
 
     form = models.ForeignKey(Form, null=True, on_delete=models.SET_NULL)
-    next = models.ForeignKey('self', null=True, on_delete=get_next)
+    next = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
 
 
 class Course(models.Model):
@@ -31,7 +31,7 @@ class Course(models.Model):
     roster = models.ManyToManyField(User)
     title = models.CharField(max_length=256)
     code = models.TextField(default='', unique=True)  # Ex: 2026-F-[course#]
-    head = models.ForeignKey(Page, on_delete=get_head, null=True)
+    head = models.ForeignKey(Page, on_delete=models.SET_NULL, null=True)
 
 
 class Team(models.Model):
@@ -40,7 +40,7 @@ class Team(models.Model):
 
 
 class Post(models.Model):
-    Team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
     text = models.TextField(default='')
@@ -50,6 +50,6 @@ class Post(models.Model):
 
 
 class Forum(models.Model):
-    Team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
     question = models.TextField()
     page = models.ForeignKey(Page, on_delete=models.CASCADE)
