@@ -9,7 +9,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from r4r.main.mixins import IsStaffMixin, IsSuperuserMixin
 from r4r.main.serializers import (
-    CourseSerializer, TeamSerializer, UserSerializer
+    CourseDetailSerializer, CourseListSerializer, TeamSerializer,
+    UserSerializer
 )
 from r4r.main.permissions import (
     IsSuperuserOrReadOnlyAuth, IsStaffOrReadOnlyAuth,
@@ -30,7 +31,7 @@ class UserViewSet(IsSuperuserMixin, LoginRequiredMixin, viewsets.ModelViewSet):
             permission_classes=[DjangoModelPermissionsOrAuthReadOnly])
     def courses(self, request, pk=None):
         courses = self.get_object().course_set.all()
-        serializer = CourseSerializer(courses, many=True)
+        serializer = CourseListSerializer(courses, many=True)
         return Response(serializer.data)
 
 
@@ -40,7 +41,7 @@ class CourseViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     """
 
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+    serializer_class = CourseDetailSerializer
     permission_classes = [IsSuperuserOrReadOnlyAuth]
 
 
