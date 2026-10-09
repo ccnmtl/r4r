@@ -35,12 +35,14 @@ class Course(models.Model):
         return self.object.roster.filter(is_staff=True)
 
     code = models.CharField(max_length=256, default='', unique=True)
+    courseworks = models.IntegerField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     details = models.TextField(default='')
     is_active = models.BooleanField(default=False)
-    instructors = models.ManyToManyField(User, related_name='instructors')
-    roster = models.ManyToManyField(User)
-    title = models.CharField(max_length=256)
+    instructors = models.ManyToManyField(
+        User, related_name='instructors', blank=True)
+    roster = models.ManyToManyField(User, blank=True)
+    title = models.CharField(max_length=256, blank=True, default='')
 
 
 class Rotation(LinkedModel):
@@ -52,8 +54,6 @@ class Rotation(LinkedModel):
 class Team(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     members = models.ManyToManyField(User)
-    leader = models.ForeignKey(
-        User, null=True, on_delete=models.SET_NULL, related_name='leader')
 
 
 class Forum(models.Model):

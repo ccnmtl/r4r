@@ -30,8 +30,7 @@ class UserViewSet(IsSuperuserMixin, LoginRequiredMixin, viewsets.ModelViewSet):
     @action(methods=['GET'], detail=True,
             permission_classes=[DjangoModelPermissionsOrAuthReadOnly])
     def courses(self, request, pk=None):
-        courses = self.get_object().course_set.all()
-        serializer = CourseListSerializer(courses, many=True)
+        serializer = CourseListSerializer(context={'request': request})
         return Response(serializer.data)
 
 
