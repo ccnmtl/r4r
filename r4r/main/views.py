@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -12,9 +13,9 @@ from r4r.main.serializers import (
     CourseDetailSerializer, CourseListSerializer, TeamSerializer,
     UserSerializer
 )
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from r4r.main.permissions import (
-    IsSuperuserOrReadOnlyAuth, IsStaffOrReadOnlyAuth,
-    DjangoModelPermissionsOrAuthReadOnly
+    IsSuperuserOrReadOnlyAuth, IsStaffOrReadOnlyAuth
 )
 
 
@@ -25,13 +26,17 @@ class UserViewSet(IsSuperuserMixin, LoginRequiredMixin, viewsets.ModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsSuperuserOrReadOnlyAuth]
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
     @action(methods=['GET'], detail=True,
-            permission_classes=[DjangoModelPermissionsOrAuthReadOnly])
+            permission_classes=[DjangoModelPermissionsOrAnonReadOnly])
     def courses(self, request, pk=None):
-        courses = self.get_object().course_set.all()
-        serializer = CourseListSerializer(courses, many=True)
+        user = self.get_object()
+        courses = Course.objects.filter(
+            Q(roster=user) | Q(instructors=user)
+        ).distinct()
+        serializer = CourseListSerializer(
+            courses, many=True, context={'request': request})
         return Response(serializer.data)
 
 

@@ -1,7 +1,6 @@
 import React from 'react';
 
 export default function Contact() {
-    // @ts-expect-error: Event data is known
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = event;

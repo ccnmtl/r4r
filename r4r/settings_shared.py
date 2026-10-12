@@ -75,7 +75,7 @@ if not ('test' in sys.argv or 'jenkins' in sys.argv):
 
 
 # Team count is constant throughout a given course
-TEAM_COUNT = 12
+MAX_TEAMS = 12
 
 THUMBNAIL_SUBDIR = "thumbs"
 LOGIN_REDIRECT_URL = "/"
