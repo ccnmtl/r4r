@@ -1,8 +1,6 @@
 import requests
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 COURSEWORKS_API = os.getenv("COURSEWORKS_API")
 
 
