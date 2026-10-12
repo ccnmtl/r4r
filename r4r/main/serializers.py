@@ -12,7 +12,7 @@ class CaseSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class CourseListSerializer(serializers.HyperlinkedModelSerializer):
+class CourseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = '__all__'
