@@ -1,3 +1,4 @@
+from rest_framework import serializers
 import requests
 import os
 
@@ -6,6 +7,9 @@ COURSEWORKS_API = os.getenv("COURSEWORKS_API")
 
 def fetch_courseworks_data(path: str) -> object | None:
     """Fetch Courseworks data according to the path"""
+    if not isinstance(COURSEWORKS_API, str) or len(COURSEWORKS_API) == 0:
+        raise serializers.ValidationError(
+            'Couseworks API key is missing from .env file')
     response = requests.get(
         f'https://courseworks2.columbia.edu/api/v1/{path}?per_page=1000',
         timeout=10, headers={'Authorization': f'Bearer {COURSEWORKS_API}'})
