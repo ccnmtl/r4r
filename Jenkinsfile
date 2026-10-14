@@ -36,10 +36,11 @@ try {
         dbPassword = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PASSWORD")
         dbUser = getAwsParameter("/${env.ENV}/postgresql/DATABASE_USER")
         dbPort = getAwsParameter("/${env.ENV}/postgresql/DATABASE_PORT")
-        SENTRY_DSN = getAwsParameter("/r4r/SENTRY_DSN")
-        SENTRY_KEY = getAwsParameter("/r4r/SENTRY_KEY")
+        SENTRY_DSN = getAwsParameter("/${env.APP}/SENTRY_DSN")
+        SENTRY_KEY = getAwsParameter("/${env.APP}/SENTRY_KEY")
         ACCESS_KEY = getAwsParameter("/production/AWS_ACCESS_KEY_ID")
         SECRET_KEY = getAwsParameter("/production/AWS_SECRET_ACCESS_KEY")
+        COURSEWORKS_API = getAwsParameter("/${env.APP}/COURSEWORKS_API")
 
         stage 'Generate .env file'
         sh """
@@ -57,6 +58,7 @@ try {
             echo SENTRY_KEY=${SENTRY_KEY} >> .env
             echo ACCESS_KEY=${ACCESS_KEY} >> .env
             echo SECERT_KEY=${SECRET_KEY} >> .env
+            echo COURSEWORKS_API=${COURSEWORKS_API} >> .env
             set -x
         """
 
