@@ -4,7 +4,6 @@ services:
     build: .
     command: >
       sh -c "python manage.py migrate --noinput --settings=r4r.settings_$ENV &&
-             python manage.py collectstatic &&
              npm ci &&
              trap 'kill 0' EXIT;
              python manage.py runserver --settings=r4r.settings_$ENV 0.0.0.0:$PORT &&
