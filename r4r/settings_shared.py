@@ -45,7 +45,6 @@ REST_FRAMEWORK = {
 }
 
 if not ('test' in sys.argv or 'jenkins' in sys.argv):
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     AWS_ACCESS_KEY = getenv('AWS_ACCESS_KEY')
     AWS_SECRET_KEY = getenv('AWS_SECRET_KEY')
     AWS_ACCESS_KEY_ID = getenv('AWS_ACCESS_KEY_ID')
