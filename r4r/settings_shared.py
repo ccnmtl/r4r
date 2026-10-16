@@ -50,8 +50,6 @@ if not ('test' in sys.argv or 'jenkins' in sys.argv):
     AWS_ACCESS_KEY_ID = getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = getenv('AWS_SECRET_ACCESS_KEY')
 
-    S3_MEDIA_BUCKET_NAME = 'ctl-r4r-static-stage'
-
     EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
     EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
     EMAIL_PORT = 465
