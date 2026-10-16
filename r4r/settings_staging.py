@@ -7,7 +7,7 @@ locals().update(
     common(
         project=project,  # noqa: F405
         base=base,  # noqa: F405
-        STATIC_ROOT=STATIC_ROOT,  # noqa: F405
+        STATIC_ROOT='/src/media',  # noqa: F405
         INSTALLED_APPS=INSTALLED_APPS,  # noqa: F405
         # if you use cloudfront:
         #        cloudfront="justtheidhere",

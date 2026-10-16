@@ -8,6 +8,7 @@
     "url": "https://github.com/ccnmtl/r4r/issues"
   },
     "scripts": {
+        "build": "NODE_ENV=production webpack --mode production --config webpack.config.js",
         "build-scss": "sass --style compressed ./media/scss/main.scss ./media/css/main.css",
         "dev": "webpack --mode development --watch --config webpack.config.js",
         "eslint": "eslint media/js/src/*",
