@@ -7,7 +7,7 @@ services:
              npm ci &&
              trap 'kill 0' EXIT;
              python manage.py runserver --settings=r4r.settings_$ENV 0.0.0.0:$PORT &&
-             npm run dev"
+             npm run build"
     volumes:
       - .:/src
       - /var/log/django/r4r.log:/var/log/django/r4r.log
