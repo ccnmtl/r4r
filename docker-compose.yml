@@ -4,11 +4,11 @@ services:
     build: .
     command: >
       sh -c "python manage.py migrate --noinput --settings=r4r.settings_$ENV &&
-             python manage.py collectstatic --noinput --settings=r4r.settings_$ENV &&
              npm ci &&
              trap 'kill 0' EXIT;
-             python manage.py runserver --settings=r4r.settings_$ENV 0.0.0.0:$PORT &&
-             npm run build"
+             npm run build &&
+             python manage.py collectstatic --noinput --settings=r4r.settings_$ENV &&
+             python manage.py runserver --settings=r4r.settings_$ENV 0.0.0.0:$PORT"
     volumes:
       - .:/src
       - /var/log/django/r4r.log:/var/log/django/r4r.log
