@@ -8,25 +8,14 @@ class LinkedModel(models.Model):
     next = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
 
 
-class Form(models.Model):
-    prompt = models.TextField(null=True)
-    media_url = models.TextField(null=True)
-
-
-class Task(LinkedModel):
+class Prompt(LinkedModel):
     details = models.TextField(default='')
-    form = models.ForeignKey(Form, null=True, on_delete=models.SET_NULL)
+    media_url = models.TextField(null=True)
     release_date = models.DateTimeField(auto_now_add=True)
 
 
-class Day(LinkedModel):
-    details = models.TextField(default='')
-    head = models.ForeignKey(Task, null=True, on_delete=models.SET_NULL)
-    title = models.CharField(max_length=256, null=True)
-
-
 class Case(LinkedModel):
-    head = models.ForeignKey(Task, null=True, on_delete=models.SET_NULL)
+    head = models.ForeignKey(Prompt, null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=256, null=True)
 
 
@@ -41,32 +30,33 @@ class Course(models.Model):
     is_active = models.BooleanField(default=False)
     instructors = models.ManyToManyField(
         User, related_name='instructor_set', blank=True)
-    roster = models.ManyToManyField(User, blank=True)
     title = models.CharField(max_length=256, blank=True, default='')
 
 
-class Rotation(LinkedModel):
+class Rotation(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     head = models.ForeignKey(Case, null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=256)
+    roster = models.ManyToManyField(User, blank=True)
 
 
 class Team(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    rotation = models.ForeignKey(Rotation, on_delete=models.CASCADE)
     members = models.ManyToManyField(User)
 
 
-class Forum(models.Model):
+class Discussion(models.Model):
     team = models.ForeignKey(Team, null=True, on_delete=models.CASCADE)
-    question = models.TextField()
-    day = models.ForeignKey(Day, null=True, on_delete=models.CASCADE)
+    prompt = models.ForeignKey(Prompt, null=True, on_delete=models.CASCADE)
 
 
 class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    forum = models.ForeignKey(Forum, null=True, on_delete=models.CASCADE)
+    discussion = models.ForeignKey(
+        Discussion, null=True, on_delete=models.CASCADE)
     is_draft = models.BooleanField(default=True)
     is_edited = models.BooleanField(default=False)
     parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
     text = models.TextField(default='')
+    unread = models.BooleanField(default=True)
     user = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)

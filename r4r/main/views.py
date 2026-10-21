@@ -4,14 +4,14 @@ from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import ensure_csrf_cookie
-from r4r.main.models import Course, Team
+from r4r.main.models import Course, Team, Rotation
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from r4r.main.mixins import IsStaffMixin, IsSuperuserMixin
 from r4r.main.serializers import (
-    CourseDetailSerializer, CourseListSerializer, TeamSerializer,
-    UserSerializer
+    CourseDetailSerializer, CourseListSerializer, RotationSerializer,
+    TeamSerializer, UserSerializer
 )
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from r4r.main.permissions import (
@@ -32,9 +32,13 @@ class UserViewSet(IsSuperuserMixin, LoginRequiredMixin, viewsets.ModelViewSet):
             permission_classes=[DjangoModelPermissionsOrAnonReadOnly])
     def courses(self, request, pk=None):
         user = self.get_object()
-        courses = Course.objects.filter(
-            Q(roster=user) | Q(instructors=user)
-        ).distinct()
+
+        #  GET instructor courses
+        courses = Course.objects.filter(instructors=user).distinct()
+        #  ADD student courses
+        courses.union(Course.objects.filter(pk__in=Rotation.objects.filter(
+            Q(roster=user)).distinct()))
+
         serializer = CourseListSerializer(
             courses, many=True, context={'request': request})
         return Response(serializer.data)
@@ -47,6 +51,22 @@ class CourseViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
     queryset = Course.objects.all()
     serializer_class = CourseDetailSerializer
+    permission_classes = [IsSuperuserOrReadOnlyAuth]
+
+    def list(self, request):
+        queryset = Course.objects.all()
+        serializer = CourseListSerializer(
+            queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+
+
+class RotationViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+    """
+    API endpoint that allows courses to be viewed or edited.
+    """
+
+    queryset = Rotation.objects.all()
+    serializer_class = RotationSerializer
     permission_classes = [IsSuperuserOrReadOnlyAuth]
 
 
