@@ -18,6 +18,7 @@ def trigger_error(request):
 router = routers.DefaultRouter()
 router.register(r'user', views.UserViewSet)
 router.register(r'course', views.CourseViewSet)
+router.register(r'rotation', views.RotationViewSet)
 router.register(r'team', views.TeamViewSet)
 
 
