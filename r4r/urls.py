@@ -20,6 +20,8 @@ router.register(r'user', views.UserViewSet)
 router.register(r'course', views.CourseViewSet)
 router.register(r'rotation', views.RotationViewSet)
 router.register(r'team', views.TeamViewSet)
+router.register(r'case', views.CaseViewSet)
+router.register(r'prompt', views.PromptViewSet)
 
 
 urlpatterns = [

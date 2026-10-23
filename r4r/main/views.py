@@ -1,35 +1,33 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import ensure_csrf_cookie
-from r4r.main.models import Course, Team, Rotation
+from r4r.main.models import Case, Course, Prompt, Team, Rotation
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from r4r.main.mixins import IsStaffMixin, IsSuperuserMixin
+from r4r.main.mixins import IsStaffMixin
 from r4r.main.serializers import (
     CourseDetailSerializer, CourseListSerializer, RotationSerializer,
-    TeamSerializer, UserSerializer
+    TeamSerializer, UserSerializer, CaseSerializer, PromptSerializer
 )
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from r4r.main.permissions import (
     IsSuperuserOrReadOnlyAuth, IsStaffOrReadOnlyAuth
 )
 
 
-class UserViewSet(IsSuperuserMixin, LoginRequiredMixin, viewsets.ModelViewSet):
+class UserViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    permission_classes = [IsSuperuserOrReadOnlyAuth]
 
     @action(methods=['GET'], detail=True,
-            permission_classes=[DjangoModelPermissionsOrAnonReadOnly])
+            permission_classes=[IsSuperuserOrReadOnlyAuth])
     def courses(self, request, pk=None):
         user = self.get_object()
 
@@ -37,11 +35,21 @@ class UserViewSet(IsSuperuserMixin, LoginRequiredMixin, viewsets.ModelViewSet):
         courses = Course.objects.filter(instructors=user).distinct()
         #  ADD student courses
         courses.union(Course.objects.filter(pk__in=Rotation.objects.filter(
-            Q(roster=user)).distinct()))
+            pk__in=Team.objects.filter(members=user).distinct())))
 
         serializer = CourseListSerializer(
             courses, many=True, context={'request': request})
         return Response(serializer.data)
+
+
+class CaseViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+    """
+    API endpoint that allows courses to be viewed or edited.
+    """
+
+    queryset = Case.objects.all()
+    serializer_class = CaseSerializer
+    permission_classes = [IsStaffOrReadOnlyAuth]
 
 
 class CourseViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
@@ -68,6 +76,16 @@ class RotationViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Rotation.objects.all()
     serializer_class = RotationSerializer
     permission_classes = [IsSuperuserOrReadOnlyAuth]
+
+
+class PromptViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+    """
+    API endpoint that allows courses to be viewed or edited.
+    """
+
+    queryset = Prompt.objects.all()
+    serializer_class = PromptSerializer
+    permission_classes = [IsStaffOrReadOnlyAuth]
 
 
 class TeamViewSet(IsStaffMixin, LoginRequiredMixin, viewsets.ModelViewSet):

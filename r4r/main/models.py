@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 
 
 class LinkedModel(models.Model):
-    head = None
     next = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
 
 
@@ -37,12 +36,12 @@ class Rotation(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     head = models.ForeignKey(Case, null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=256)
-    roster = models.ManyToManyField(User, blank=True)
 
 
 class Team(models.Model):
     rotation = models.ForeignKey(Rotation, on_delete=models.CASCADE)
     members = models.ManyToManyField(User)
+    number = models.IntegerField()
 
 
 class Discussion(models.Model):

@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
-from r4r.main.models import Course, Team, Rotation, Case
+from r4r.main.models import (
+    Course, Team, Rotation, Case, Prompt
+)
 from rest_framework import serializers
 from r4r.main.utils import fetch_courseworks_data, get_ll
 from r4r.settings import MAX_TEAMS
@@ -7,9 +9,41 @@ from random import shuffle
 
 
 class CaseSerializer(serializers.HyperlinkedModelSerializer):
+    next = serializers.HyperlinkedIdentityField(view_name="case-detail")
+
     class Meta:
         model = Case
         fields = '__all__'
+
+
+class PromptSerializer(serializers.HyperlinkedModelSerializer):
+    next = serializers.HyperlinkedIdentityField(view_name="prompt-detail")
+
+    class Meta:
+        model = Prompt
+        fields = '__all__'
+
+
+class TeamSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Team
+        fields = '__all__'
+
+
+class TeamRefSerializer(serializers.HyperlinkedModelSerializer):
+    members = serializers.SerializerMethodField('get_members')
+
+    def get_members(self, instance):
+        return [
+            f'{user['url']}: {user['username']}'
+            for user in UserSerializer(
+                instance.members,
+                many=True,
+                context=self.context).data]
+
+    class Meta:
+        model = Team
+        fields = ['url', 'number', 'members']
 
 
 class CourseListSerializer(serializers.HyperlinkedModelSerializer):
@@ -25,14 +59,11 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
     rotations = serializers.SerializerMethodField('get_rotations')
 
     def get_rotations(self, instance):
-        def read_roster(roster):
-            return [
-                (f'{user['url']}: {user['username']}')
-                for user in UserSerializer(
-                    roster,
-                    many=True,
-                    context=self.context).data
-            ]
+        def get_teams(rotation):
+            return TeamRefSerializer(
+                Team.objects.filter(rotation=rotation),
+                many=True,
+                context=self.context).data
 
         rotations = instance.rotation_set.all()
 
@@ -42,7 +73,7 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
                 'title': case.title,
                 'days': get_ll(case.head)
                 } for case in get_ll(rotation.head)],
-            'roster': read_roster(rotation.roster.all())
+            'teams': get_teams(rotation)
             } for rotation in rotations]
 
     class Meta:
@@ -98,27 +129,28 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
                     course.instructors.add(user)
                 else:
                     roster.append(user)
-        if len(roster) < 1:
-            if len(roster) < MAX_TEAMS * 4:
-                team_num = int(len(roster) / 4) + 1
-            else:
-                team_num = MAX_TEAMS
+        for title in ['Medicine']:
+            if len(roster) > 0:
+                #  Create the rotation
+                rotation = Rotation.objects.create(title=title, course=course)
+                # Calculate number of teams
+                if len(roster) < MAX_TEAMS * 4:
+                    team_num = int(len(roster) / 4) + 1
+                else:
+                    team_num = MAX_TEAMS
 
-            shuffle(roster)
+                shuffle(roster)
 
-            while team_num > 0:
-                remainder = len(roster)
-                members = [roster.pop() for x in
-                           range(int(remainder / team_num))]
-                team = Team.objects.create(course=course)
-                team.members.set(members)
-                team.save()
-                team_num -= 1
-        for title in ['Emergency Medicine', 'OB/GYN', 'Pediatrics']:
-            rotation = Rotation.objects.create(title=title, course=course)
-            rotation.roster.add(roster)
-            rotation.save()
-
+                #  Generate teams
+                while team_num > 0:
+                    remainder = len(roster)
+                    members = [roster.pop() for x in
+                               range(int(remainder / team_num))]
+                    team = Team.objects.create(
+                        rotation=rotation, number=team_num)
+                    team.members.set(members)
+                    team.save()
+                    team_num -= 1
         return course
 
 
@@ -137,12 +169,6 @@ class RotationSerializer(serializers.HyperlinkedModelSerializer):
                 many=True,
                 context=self.context).data
         ]
-
-
-class TeamSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Team
-        fields = '__all__'
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
