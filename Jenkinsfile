@@ -41,6 +41,7 @@ try {
         ACCESS_KEY = getAwsParameter("/production/AWS_ACCESS_KEY_ID")
         SECRET_KEY = getAwsParameter("/production/AWS_SECRET_ACCESS_KEY")
         COURSEWORKS_API = getAwsParameter("/${env.APP}/COURSEWORKS_API")
+        CLOUDFRONT = getAwsParameter("/${env.ENV}/${env.APP}/CLOUDFRONT")
 
         stage 'Generate .env file'
         sh """
@@ -59,6 +60,7 @@ try {
             echo ACCESS_KEY=${ACCESS_KEY} >> .env
             echo SECERT_KEY=${SECRET_KEY} >> .env
             echo COURSEWORKS_API=${COURSEWORKS_API} >> .env
+            echo CLOUDFRONT=${CLOUDFRONT} >> .env
             set -x
         """
 
