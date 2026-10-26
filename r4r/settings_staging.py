@@ -1,6 +1,7 @@
 from r4r.settings_shared import *  # noqa: F403
 from ctlsettings.staging import common, init_sentry
 from django.conf import settings
+from os import getenv
 
 
 locals().update(
@@ -10,7 +11,7 @@ locals().update(
         STATIC_ROOT='/src/static',  # noqa: F405
         INSTALLED_APPS=INSTALLED_APPS,  # noqa: F405
         # if you use cloudfront:
-        #        cloudfront="justtheidhere",
+        cloudfront=getenv('CLOUDFRONT'),
         # if you don't use S3/cloudfront at all:
         #       s3static=False,
     ))
