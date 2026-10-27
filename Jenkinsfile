@@ -66,8 +66,8 @@ try {
 
         stage "Copy files to host"
         sh """
-            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/.env ${server_host}:/var/www/${APP}/.env
-            rsync -a --cvs-exclude --compress --delete --verbose ${checkoutDir}/* ${server_host}:/var/www/${APP}/
+            rsync -a --cvs-exclude --compress --delete --exclude 'media/build' --verbose ${checkoutDir}/.env ${server_host}:/var/www/${APP}/.env
+            rsync -a --cvs-exclude --compress --delete --exclude 'media/build' --verbose ${checkoutDir}/* ${server_host}:/var/www/${APP}/
         """
 
         stage "Restart Docker compose"
