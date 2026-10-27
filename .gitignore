@@ -162,3 +162,5 @@ cython_debug/
 node_modules
 data/
 package-lock.json
+marc-claude-designs/
+DESIGN.md
