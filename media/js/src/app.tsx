@@ -6,13 +6,15 @@ import CourseList from './courseList';
 import { UserProps } from './utils';
 import Footer from './footer';
 import Contact from './contact';
+import Topbar from './topbar';
 
 declare global {
     interface Window {
         r4r: {
             staticUrl: string,
             baseUrl: string,
-            currentUser: UserProps
+            currentUser: UserProps,
+            csrf: string
         }
     }
 }
@@ -20,6 +22,9 @@ declare global {
 
 export default function App() {
     return <Router>
+        <header>
+            <Topbar />
+        </header>
         <div className='container'>
             <div className="my-4">
                 <Routes>
@@ -29,7 +34,7 @@ export default function App() {
                     <Route path='/course/:courseId' element={<Course/>} />
                 </Routes>
             </div>
+            <Footer />
         </div>
-        <Footer />
     </Router>;
 };

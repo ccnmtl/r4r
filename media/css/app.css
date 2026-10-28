@@ -1,0 +1,107 @@
+/* Component styles for eHospital. These were inline styles in the design. */
+
+/* ---------- Utilities ---------- */
+.min-w-0 { min-width: 0; }
+.text-pretty { text-wrap: pretty; }
+.pre-wrap { white-space: pre-wrap; }
+.cursor-pointer { cursor: pointer; }
+.eyebrow { letter-spacing: .08em; }
+.eyebrow-sm { letter-spacing: .08em; font-size: 12px; }
+.text-ink-2 { color: #2C3B43; }
+.text-ink-3 { color: #3A4A53; }
+.fs-inherit { font-size: inherit; }
+.btn-min-32 { min-height: 32px; }
+.btn-dashed { border-style: dashed !important; }
+.btn-locked { opacity: .65; cursor: not-allowed; }
+.badge-new { background: var(--cuimc-accent); }
+.basis-260 { flex-basis: 260px; }
+.basis-200 { min-width: 200px; }
+
+.max-w-720 { max-width: 720px; }
+.max-w-760 { max-width: 760px; }
+.max-w-800 { max-width: 800px; }
+.max-w-820 { max-width: 820px; }
+
+/* ---------- Avatars (initials in a circle) ---------- */
+.avatar { width: 36px; height: 36px; font-size: 12px; }
+.avatar-26 { width: 26px; height: 26px; font-size: 12px; }
+.avatar-28 { width: 28px; height: 28px; font-size: 12px; }
+.avatar-34 { width: 34px; height: 34px; }
+.avatar-38 { width: 38px; height: 38px; }
+.avatar-text-sm { font-size: .875em; }
+
+/* ---------- Brand mark ---------- */
+/* TODO: replace with the approved CUIMC lockup. */
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  font-size: 12px;
+  letter-spacing: -.02em;
+  color: #B42318;
+  background: #fff;
+}
+.brand-mark--sm { width: 34px; height: 34px; }
+.brand-mark--solid { color: #fff; background: #B42318; }
+
+/* ---------- App shell ---------- */
+.app-sidebar { width: 240px; background: var(--cuimc-navy); }
+.app-sidebar__label { letter-spacing: .08em; font-size: 12px; color: rgba(255, 255, 255, .8); }
+.app-sidebar__footer { border-top: 1px solid rgba(255, 255, 255, .25); }
+.app-topbar { background: var(--cuimc-navy); }
+.app-main { max-width: 1180px; margin-left: 0; }
+.page-title { letter-spacing: -0.02em; }
+
+/* ---------- Landing & sign in ---------- */
+.hero-title { letter-spacing: -0.025em; text-wrap: balance; }
+.hero-lead { max-width: 520px; text-wrap: pretty; }
+.auth-panel { max-width: 400px; }
+
+/* ---------- Faculty dashboard cards ---------- */
+.home-card {
+  background: var(--card-tint);
+  border-color: var(--card-line);
+  border-top: 4px solid var(--card-accent);
+}
+.home-card__title,
+.home-card__link { color: var(--card-accent); }
+.home-card__footer { border-top: 1px solid var(--card-line); }
+.home-card--members { --card-accent: #AE2573; --card-tint: #FBEFF5; --card-line: #EFC9DC; }
+.home-card--rotation { --card-accent: #C93D00; --card-tint: #FFF2EA; --card-line: #F7D2BD; }
+.home-card--feedback { --card-accent: #228848; --card-tint: #EDF7F0; --card-line: #C6E5D0; }
+
+/* ---------- Student home ---------- */
+.continue-card { background: var(--bs-primary-bg-subtle); border-color: var(--bs-primary-border-subtle); }
+.progress-thin { height: 8px; background: #fff; }
+
+/* Small padlock drawn with CSS */
+.lock-icon__shackle { width: 5px; height: 4px; border: 1.5px solid currentColor; border-bottom: none; border-radius: 3px 3px 0 0; }
+.lock-icon__body { width: 8px; height: 6px; border-radius: 1px; background: currentColor; }
+.lock-icon--step .lock-icon__shackle { width: 6px; height: 5px; border-color: #7A8A93; }
+.lock-icon--step .lock-icon__body { width: 9px; height: 7px; border-radius: 1.5px; background: #7A8A93; }
+
+/* ---------- Student rotation ---------- */
+.prompt-nav { top: 24px; }
+.prompt-nav__card { max-height: calc(100vh - 48px); }
+.prompt-body { line-height: 1.65; text-wrap: pretty; }
+.file-tile { width: 48px; height: 56px; }
+
+/* ---------- Discussion threads ---------- */
+.thread-rail {
+  width: 24px;
+  background: linear-gradient(#DCE3E7, #DCE3E7) center / 2px 100% no-repeat;
+}
+.thread-rail:hover,
+.thread-rail:focus-visible {
+  background: linear-gradient(#1D4F91, #1D4F91) center / 2px 100% no-repeat;
+}
+.comment-toggle { width: 28px; height: 28px; font-size: 15px; line-height: 1; }
+.comment-body { padding-left: 36px; }
+.comment-text { line-height: 1.55; text-wrap: pretty; }
+
+/* ---------- Tables & forms ---------- */
+.table-col-head { font-size: 12px; letter-spacing: .06em; }
+.option-letter-btn { width: 38px; }
+.error-dot { width: 16px; height: 16px; font-size: 12px; }
+
+/* ---------- Toast ---------- */
+.app-toast { z-index: 1090; width: auto; }
