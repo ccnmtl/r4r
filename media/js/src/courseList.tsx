@@ -18,7 +18,6 @@ export default function CourseList() {
 
     return <section id='courses'>
         <h1>My Courses</h1>
-        {isStaff ? 'You are Staff' : 'You are NOT staff'}
         <div id='course-list' className='list-group'>
             {courseList ?
                 (courseList.length > 0) ?

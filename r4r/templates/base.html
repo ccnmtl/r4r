@@ -14,6 +14,8 @@
 
     <!-- Local CSS -->
     <link href="{{STATIC_URL}}css/main.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}css/app.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}css/theme.css" rel="stylesheet">
     {% block css %}{% endblock %}
 
     <!-- Standard Meta Data -->
@@ -62,6 +64,7 @@
     <meta id="csrf-token" name="csrf-token" content="{{csrf_token}}">
     <script>
             window.r4r = {
+                csrf: '{{ csrf_token }}',
                 staticUrl: '{{ STATIC_URL }}',
                 baseUrl: '//{{ request.get_host }}',
                 {% if not request.user.is_anonymous %}
@@ -91,61 +94,6 @@
     </div>
 </a>
 
-<header>
-{% block topnavbar %}
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark px-4">
-    <a class="navbar-brand" href="/" title="Home">Ready For Residency</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="topNavbar">
-        {% comment %} <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="#" title="Home">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" title="Link">Link</a>
-            </li>
-        </ul> {% endcomment %}
-    </div>
-
-    {% block usernav %}
-    <ul class="navbar-nav flex-row ml-md-auto d-md-flex">
-        <li class="nav-item"><span class="nav-link">
-            {% if request.user.is_anonymous %}
-            You're not logged in
-            {% else %}
-            Logged in as
-                {% if request.user.last_name %}
-                {{request.user.first_name}} {{request.user.last_name}}
-                {% else %}
-                {{ request.user.username }}
-                {% endif %}
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="nav-link text-white" title="Log Out">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span title="Log Out">(Log Out)</span>
-                </button>
-            </form>
-            {% endif %}
-            </span>
-        </li>
-        {% if request.user.is_superuser %}
-        <li class="nav-item">
-            <a href="{% url 'impersonate-list' %}" title="Impersonate" class="nav-link">impersonate</a>
-        </li>
-        {% endif %}
-    </ul>
-    {% endblock %}
-</nav>
-{% endblock %}
-</header>
-
-
-
-{% block pagetitle %}{% endblock %}
 {% block content %}{% endblock %}
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
