@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import About from './about';
-import Course from './course';
+import Dashboard from './dashboard';
 import CourseList from './courseList';
-import { UserProps } from './utils';
+import { authUser, UserProps } from './utils';
 import Footer from './footer';
 import Contact from './contact';
 import Topbar from './topbar';
+import Sidebar from './sidebar';
 
 declare global {
     interface Window {
@@ -19,22 +20,24 @@ declare global {
     }
 }
 
+const staff = authUser.is_staff;
 
 export default function App() {
     return <Router>
-        <header>
-            <Topbar />
-        </header>
-        <div className='container'>
-            <div className="my-4">
-                <Routes>
-                    <Route path='/' element={<CourseList />} />
-                    <Route path='/about' element={<About/>} />
-                    <Route path='/contact' element={(<Contact/>)} />
-                    <Route path='/course/:courseId' element={<Course/>} />
-                </Routes>
-            </div>
-            <Footer />
+        <div className={`d-flex${staff ? '' : ' flex-column'} vh-100`}>
+            {staff ? <Sidebar unread={0} /> : <Topbar />}
+            <main id='content' className='d-flex flex-column m-0 w-100 h-100'>
+                <div className='mb-auto p-4'>
+                    <Routes>
+                        <Route path='/' element={<CourseList />} />
+                        <Route path='/about' element={<About/>} />
+                        <Route path='/contact' element={(<Contact/>)} />
+                        <Route path='/course/:courseId'
+                            element={<Dashboard/>} />
+                    </Routes>
+                </div>
+                <Footer />
+            </main>
         </div>
     </Router>;
 };
