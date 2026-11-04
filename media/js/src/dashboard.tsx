@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { CaseProps, CourseProps } from './utils';
+import { authUser, CaseProps, CourseProps, months } from './utils';
 
-export default function Course() {
+export default function Dashboard() {
     const [course, setCourse] = useState<CourseProps>();
     const { courseId } = useParams();
+    const d = new Date();
+    const date = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 
     useEffect(() => {
         axios.get(`/api/course/${courseId}/`)
@@ -25,7 +27,15 @@ export default function Course() {
         </section>;
 
     return course ?
-        <section id='course'>
+        <main id='dashboard'>
+            <div className="mb-4">
+                <div className="text-secondary small mb-1">{date}</div>
+                <h1 className="display-6 fw-bold mb-1">Faculty Dashboard</h1>
+                <p className="text-secondary mb-0">
+                    Signed in
+                    as {`${authUser.first_name} ${authUser.last_name}`}
+                </p>
+            </div>
             <h2>{course.title}</h2>
             <p>{course.code}</p>
             <p>{course.details ||
@@ -56,7 +66,7 @@ export default function Course() {
                     </section>
                 )}
             </section>
-        </section>
+        </main>
         :
         <div className='spinner-border text-secondary' role='status'>
             <span className='visually-hidden'>Loading...</span>

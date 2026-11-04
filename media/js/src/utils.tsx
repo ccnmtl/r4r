@@ -38,7 +38,7 @@ export interface UserProps {
     is_superuser: boolean
     last_name: string | undefined
     id: number
-    username: string | undefined
+    username: string
     email: string | undefined
 }
 
@@ -50,3 +50,19 @@ export interface TeamProps {
 
 
 export const authUser = window.r4r.currentUser;
+
+
+export const initials = (user:UserProps) => {
+    if (user.first_name && user.last_name) {
+        return user.first_name[0] + user.last_name[0];
+    } else if (user.first_name) {
+        return user.first_name.slice(0, 2);
+    } else if (user.last_name) {
+        return user.last_name.slice(0, 2);
+    } else {
+        return user.username.slice(0, 2);
+    }
+};
+
+export const months = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
