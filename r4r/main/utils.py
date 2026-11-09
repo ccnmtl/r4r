@@ -24,7 +24,7 @@ def get_ll(instance) -> list:
     target = instance
     try:
         while target is not None:
-            arr.append(target)
+            arr.append(target.id)
             target = target.next
     except AttributeError:
         pass

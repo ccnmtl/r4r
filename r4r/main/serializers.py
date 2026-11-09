@@ -9,16 +9,12 @@ from random import shuffle
 
 
 class CaseSerializer(serializers.HyperlinkedModelSerializer):
-    next = serializers.HyperlinkedIdentityField(view_name="case-detail")
-
     class Meta:
         model = Case
         fields = '__all__'
 
 
 class PromptSerializer(serializers.HyperlinkedModelSerializer):
-    next = serializers.HyperlinkedIdentityField(view_name="prompt-detail")
-
     class Meta:
         model = Prompt
         fields = '__all__'
@@ -55,26 +51,33 @@ class CourseListSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
+class RotationSerializer(serializers.HyperlinkedModelSerializer):
+    case = serializers.SerializerMethodField('get_case')
+    team = serializers.SerializerMethodField('get_team')
+
+    class Meta:
+        model = Rotation
+        fields = ['url', 'title', 'course', 'case', 'team']
+
+    def get_case(self, instance):
+        return CaseSerializer(
+            get_ll(instance.head), many=True, context=self.context).data
+
+    def get_team(self, instance):
+        return TeamRefSerializer(
+            Team.objects.filter(rotation=instance),
+            many=True,
+            context=self.context).data
+
+
 class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
     rotations = serializers.SerializerMethodField('get_rotations')
 
     def get_rotations(self, instance):
-        def get_teams(rotation):
-            return TeamRefSerializer(
-                Team.objects.filter(rotation=rotation),
-                many=True,
-                context=self.context).data
-
-        rotations = instance.rotation_set.all()
-
-        return [{
-            'title': rotation.title,
-            'cases': [{
-                'title': case.title,
-                'days': get_ll(case.head)
-                } for case in get_ll(rotation.head)],
-            'teams': get_teams(rotation)
-            } for rotation in rotations]
+        return RotationSerializer(
+            instance.rotation_set.all(),
+            many=True,
+            context=self.context).data
 
     class Meta:
         model = Course
@@ -152,23 +155,6 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
                     team.save()
                     team_num -= 1
         return course
-
-
-class RotationSerializer(serializers.HyperlinkedModelSerializer):
-    roster = serializers.SerializerMethodField('get_roster')
-
-    class Meta:
-        model = Rotation
-        fields = ['url', 'title', 'course', 'head', 'roster']
-
-    def get_roster(self, instance):
-        return [
-            (f'{user['url']}: {user['username']}')
-            for user in UserSerializer(
-                instance.roster,
-                many=True,
-                context=self.context).data
-        ]
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

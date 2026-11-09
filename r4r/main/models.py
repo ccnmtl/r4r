@@ -3,18 +3,16 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class LinkedModel(models.Model):
-    next = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
-
-
-class Prompt(LinkedModel):
+class Prompt(models.Model):
     details = models.TextField(default='')
     media_url = models.TextField(null=True)
+    next = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
     release_date = models.DateTimeField(auto_now_add=True)
 
 
-class Case(LinkedModel):
+class Case(models.Model):
     head = models.ForeignKey(Prompt, null=True, on_delete=models.SET_NULL)
+    next = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=256, null=True)
 
 
