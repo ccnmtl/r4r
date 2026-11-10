@@ -43,7 +43,7 @@ jmespath==1.1.0
 six==1.17.0
 
 botocore==1.43.126
-boto3==1.43.125
+boto3==1.43.126
 
 python-dateutil==4.0.0
 
