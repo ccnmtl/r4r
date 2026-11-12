@@ -4,8 +4,7 @@ from r4r.main.models import (
 )
 from rest_framework import serializers
 from r4r.main.utils import fetch_courseworks_data, get_ll
-from r4r.settings import MAX_TEAMS
-from random import shuffle
+from re import match, search
 
 
 class CaseSerializer(serializers.HyperlinkedModelSerializer):
@@ -57,7 +56,7 @@ class RotationSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Rotation
-        fields = ['url', 'title', 'course', 'case', 'team']
+        fields = ['url', 'title', 'head', 'course', 'case', 'team']
 
     def get_case(self, instance):
         return CaseSerializer(
@@ -100,6 +99,17 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError("Course Enrollments not found")
         return value
 
+    def generate_team(self, group_id, number, rotation):
+        members = []
+        team_data = fetch_courseworks_data(f'groups/{group_id}/users')
+        member_data = map(lambda user: user['login_id'], team_data)
+        for member in member_data:
+            members.append(User.objects.get(username=member))
+        team = Team.objects.create(
+            rotation=rotation, number=number)
+        team.members.set(members)
+        team.save()
+
     def create(self, validated_data):
         course = super().create(validated_data)
 
@@ -114,6 +124,7 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
 
         enrollments = fetch_courseworks_data(
             f'courses/{courseworks}/enrollments')
+
         roster = []
 
         for enrollment in enrollments:
@@ -132,28 +143,22 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
                     course.instructors.add(user)
                 else:
                     roster.append(user)
+
+        group_data = fetch_courseworks_data(
+            f'courses/{courseworks}/groups')
+        filtered_groups = filter(
+            lambda group: match(r'^team *\d+', group['name'].lower().strip()),
+            group_data)
+        teams = map(lambda group: (
+            group['id'],
+            search(r'\d+$', group['name']).group()),
+            filtered_groups)
+
         for title in ['Medicine']:
-            if len(roster) > 0:
-                #  Create the rotation
-                rotation = Rotation.objects.create(title=title, course=course)
-                # Calculate number of teams
-                if len(roster) < MAX_TEAMS * 4:
-                    team_num = int(len(roster) / 4) + 1
-                else:
-                    team_num = MAX_TEAMS
+            rotation = Rotation.objects.create(title=title, course=course)
 
-                shuffle(roster)
-
-                #  Generate teams
-                while team_num > 0:
-                    remainder = len(roster)
-                    members = [roster.pop() for x in
-                               range(int(remainder / team_num))]
-                    team = Team.objects.create(
-                        rotation=rotation, number=team_num)
-                    team.members.set(members)
-                    team.save()
-                    team_num -= 1
+            for (group_id, number) in teams:
+                self.generate_team(group_id, number, rotation)
         return course
 
 
