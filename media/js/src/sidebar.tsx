@@ -3,20 +3,20 @@ import { Link, useParams } from 'react-router-dom';
 import Avatar from './avatar';
 import BrandMark from './brandMark';
 import { authUser } from './utils';
+import CSRFToken from './csrfToken';
 
 
-export default function Sidebar({unread}) {
+export default function Sidebar({unread = 0}) {
     const { courseId } = useParams();
+
     const PATH = window.location.pathname;
-    const base = `/course/${courseId}/`;
     const INSTRUCTOR_NAV = [
-        ['Dashboard', base],
-        ['Members', base + 'members/'],
-        ['Rotation', base + 'rotation/'],
-        ['Feedback', base + 'feedback/'],
-        ['About eHospital', '/about/'],
+        ['Feedback', 'feedback'],
+        ['Rotation', 'rotation'],
+        ['Members', 'members'],
+        ['Insights', 'insights'],
+        ['About eHospital', 'about'],
     ];
-    console.log(authUser);
 
     return <nav
         className={`app-sidebar d-flex flex-column flex-shrink-0 p-3 sticky-top 
@@ -44,7 +44,7 @@ export default function Sidebar({unread}) {
         <ul className="nav nav-pills nav-dark flex-column gap-1">
             {INSTRUCTOR_NAV.map(([label, url], i) =>
                 <li key={i} className='nav-item'>
-                    <Link to={'/'}
+                    <Link to={`/course/${courseId}/${url}`}
                         className={`nav-link w-100 text-start d-flex 
                             align-items-center gap-2 ${url === PATH ?
                                 'active fw-semibold' : ''}`}
@@ -68,11 +68,14 @@ export default function Sidebar({unread}) {
                     {authUser.first_name} {authUser.last_name}</div>
                 <div className="d-flex align-items-center gap-2">
                     <span className="badge bg-white text-primary">Faculty</span>
-                    <button type='submit' title='Sign Out'
-                        className='btn btn-link btn-sm p-0 text-white'
-                    >
-                        <span title='Sign Out'>Sign Out</span>
-                    </button>
+                    <form action='/cas/logout' method='post'>
+                        <CSRFToken />
+                        <button type='submit' title='Sign Out'
+                            className='btn btn-link btn-sm p-0 text-white'
+                        >
+                            <span title='Sign Out'>Sign Out</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

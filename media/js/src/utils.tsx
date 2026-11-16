@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+import { Route } from 'react-router-dom';
 
 export interface TaskProps {
     details: string
@@ -31,7 +32,6 @@ export interface CourseProps {
     url: string
 }
 
-
 export interface UserProps {
     first_name: string | undefined
     is_staff: boolean
@@ -42,12 +42,29 @@ export interface UserProps {
     email: string | undefined
 }
 
-
 export interface TeamProps {
     course_id: number
     members: UserProps[]
 }
 
+export interface RouteItem {
+    path: string
+    el: React.JSX.Element
+}
+
+export function toTitleCase(text: string) {
+    return text
+        .replace(/\w+/g, val => val.charAt(0).toUpperCase() + val.substring(1))
+        .replace('-', ' ');
+}
+
+export function generateNestedRoute(parent:RouteItem, children:RouteItem[]) {
+    return <Route path={parent.path} element={parent.el}>
+        <Route index element={children[0].el} />
+        {children.map(({path, el}, i) =>
+            <Route key={i} path={path} element={el} />)}
+    </Route>;
+}
 
 export const authUser = window.r4r.currentUser;
 

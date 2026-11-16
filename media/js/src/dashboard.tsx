@@ -1,74 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
-import { authUser, CaseProps, CourseProps, months } from './utils';
+import React, { useEffect, useState } from 'react';
+import { toTitleCase } from './utils';
+import { useLocation } from 'react-router-dom';
 
-export default function Dashboard() {
-    const [course, setCourse] = useState<CourseProps>();
-    const { courseId } = useParams();
-    const d = new Date();
-    const date = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+interface DashboardProps {
+    children: React.JSX.Element
+    detail: string
+    title: string
+}
 
+export default function Dashboard(
+    {children, detail = '', title}: DashboardProps
+){
+    const location = useLocation();
+
+    const [breadcrumbs, setBreadcrumbs] = useState(
+        location.pathname.split('/').slice(4));
     useEffect(() => {
-        axios.get(`/api/course/${courseId}/`)
-            .then(response => setCourse(response.data));
-    }, []);
+        setBreadcrumbs(location.pathname.split('/').slice(4));
+    }, [location]);
 
-    const generateCase = (medCase:CaseProps, key:number) =>
-        <section key={key} className="card" id={`day${key+1}`}>
-            <div className="card-header">
-                <h4>{medCase.title}</h4>
+    return <section id='dashboard'>
+        <ol className='breadcrumb small mb-3'>
+            <li className='breadcrumb-item'>{title}</li>
+            {breadcrumbs.map((item, i) =>
+                <li key={i} className='breadcrumb-item'>
+                    {toTitleCase(item)}</li>)}
+        </ol>
+        <div className={`d-flex align-items-end justify-content-between gap-3 
+            flex-wrap`}
+        >
+            <div className='mb-4'>
+                <h1 className='h2 fw-bold mb-1'>{title}</h1>
+                {detail.length > 0 &&
+                    <p className='text-secondary mb-0'>{detail}</p>}
             </div>
-            <div className="card-body">
-                {medCase.days.map((day, key) =>
-                    <p key={key}>{day.title}</p>
-                )}
-            </div>
-        </section>;
-
-    return course ?
-        <main id='dashboard'>
-            <div className="mb-4">
-                <div className="text-secondary small mb-1">{date}</div>
-                <h1 className="display-6 fw-bold mb-1">Faculty Dashboard</h1>
-                <p className="text-secondary mb-0">
-                    Signed in
-                    as {`${authUser.first_name} ${authUser.last_name}`}
-                </p>
-            </div>
-            <h2>{course.title}</h2>
-            <p>{course.code}</p>
-            <p>{course.details ||
-                <em className='text-secondary'>No details</em>}</p>
-            <Link to={'/'}>Return to Course List</Link>
-            <section id='rotations' className='row p-2 g-3'>
-                {course.rotations.map((rotation, key) =>
-                    <section key={key} className='col-xl-4'
-                        id={`rotation${key+1}`}
-                    >
-                        <div className="card text-bg-light">
-                            <h3 className='card-header'>
-                                {`Rotation ${key+1}: ${rotation.title}`}</h3>
-                            <div className='card-body'>
-                                {/* 'case' is a protected keyword */}
-                                {rotation.cases.length > 0 ?
-                                    rotation.cases.map((medCase, key) =>
-                                        medCase.days.length > 0 ?
-                                            generateCase(medCase, key)
-                                            :
-                                            <em className='text-secondary'>
-                                                No Days</em>)
-                                    :
-                                    <em className='text-secondary'>
-                                        No Cases</em>}
-                            </div>
-                        </div>
-                    </section>
-                )}
-            </section>
-        </main>
-        :
-        <div className='spinner-border text-secondary' role='status'>
-            <span className='visually-hidden'>Loading...</span>
-        </div>;
+        </div>
+        {children}
+    </section>;
 };

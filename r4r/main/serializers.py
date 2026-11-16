@@ -51,7 +51,7 @@ class CourseListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RotationSerializer(serializers.HyperlinkedModelSerializer):
-    case = serializers.SerializerMethodField('get_case')
+    cases = serializers.SerializerMethodField('get_case')
     team = serializers.SerializerMethodField('get_team')
 
     class Meta:

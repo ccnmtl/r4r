@@ -40,7 +40,7 @@ urlpatterns = [
     path('uploads/<str:path>',
          serve, {'document_root': settings.MEDIA_ROOT}),
     path('sentry-debug/', trigger_error),
-    re_path('()|(course/.*?)', views.BaseView.as_view())
+    re_path('', views.BaseView.as_view())
 ]
 
 

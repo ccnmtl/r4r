@@ -5,16 +5,13 @@ import BrandMark from './brandMark';
 import CSRFToken from './csrfToken';
 
 const NAV = [
-    ['/', 'Dashboard'],
-    ['/members', 'Members'],
-    ['/rotations', 'Rotations'],
-    ['/feedback', 'Feedback'],
-    ['/about', 'About eHostpital']
+    ['/dashboard', 'Home'],
+    ['/rotation', 'Rotation'],
+    ['/about', 'About']
 ];
 
-const isStaff = authUser.is_staff;
-
 export default function Topbar() {
+    // This navbar is used by the students
     return <nav
         className='app-topbar navbar navbar-expand px-3 px-lg-4 text-white'
     >
@@ -32,16 +29,8 @@ export default function Topbar() {
                 </li>)}
             </ul>
             <div className='d-flex align-items-center gap-3'>
-                {authUser.is_superuser &&
-                    <a href='/_impersonate/list/'
-                        title='Impersonate'
-                        className='badge bg-alert'
-                    >
-                        Impersonate
-                    </a>
-                }
                 <span className='badge bg-white text-primary'>
-                    {isStaff ? 'Instructor' : 'Student'}
+                    Student
                 </span>
                 <span className='fw-medium'>{authUser.username}</span>
                 <form action='/cas/logout' method='post'>
