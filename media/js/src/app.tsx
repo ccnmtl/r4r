@@ -1,13 +1,18 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {
+    BrowserRouter as Router, Route, Routes, Outlet
+} from 'react-router-dom';
 import About from './about';
-import Dashboard from './dashboard';
 import CourseList from './courseList';
-import { authUser, UserProps } from './utils';
-import Footer from './footer';
+import { authUser, generateNestedRoute, UserProps } from './utils';
 import Contact from './contact';
-import Topbar from './topbar';
-import Sidebar from './sidebar';
+import { rotationRoutes } from './rotation';
+import { membersRoutes } from './members';
+import Insights from './insights';
+import Feedback, {feedbackRoutes} from './feedback';
+import StudentDashboard from './studentDashboard';
+import StudentRotation from './studentRotation';
+import Nav from './nav';
 
 declare global {
     interface Window {
@@ -22,22 +27,33 @@ declare global {
 
 const staff = authUser.is_staff;
 
+const staffRoutes = <Route path='/' element={<Outlet />}>
+    <Route index element={<CourseList />} />
+    <Route path='course/:courseId' element={<Nav />}>
+        <Route index element={<Feedback />} />
+        {feedbackRoutes}
+        {rotationRoutes}
+        {membersRoutes}
+        <Route path={'insights'} element={<Insights />} />
+        <Route path={'about'} element={<About />} />
+        <Route path={'contact'} element={<Contact />} />
+    </Route>;
+</Route>;
+
+const studentRoutes = generateNestedRoute(
+    {path: '/', el: <Nav />},
+    [
+        {path: 'dashboard', el: <StudentDashboard />},
+        {path: 'about', el: <About />},
+        {path: 'contact', el: <Contact />},
+        {path: 'rotation', el: <StudentRotation />}
+    ]
+);
+
 export default function App() {
     return <Router>
-        <div className={`d-flex${staff ? '' : ' flex-column'} vh-100`}>
-            {staff ? <Sidebar unread={0} /> : <Topbar />}
-            <main id='content' className='d-flex flex-column m-0 w-100 h-100'>
-                <div className='mb-auto p-4'>
-                    <Routes>
-                        <Route path='/' element={<CourseList />} />
-                        <Route path='/about' element={<About/>} />
-                        <Route path='/contact' element={(<Contact/>)} />
-                        <Route path='/course/:courseId'
-                            element={<Dashboard/>} />
-                    </Routes>
-                </div>
-                <Footer />
-            </main>
-        </div>
+        <Routes>
+            {staff ? staffRoutes : studentRoutes}
+        </Routes>
     </Router>;
 };

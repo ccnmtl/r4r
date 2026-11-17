@@ -3,21 +3,20 @@ import { Link } from 'react-router-dom';
 
 
 export default function Footer() {
+    const path = location.pathname;
+    const base = path.match(/\/course\/\d+/) || '';
+
     return <footer className='p-0 bg-light text-dark pt-2 pb-5'>
         <ul className='nav d-flex justify-content-center'>
-            <li className='nav-item'>
-                <Link className='nav-link' to='/about' title='About'>
-                    About</Link>
-            </li>
-            <li className='nav-item'>
-                <Link className='nav-link' to='#' title='Help'>Help</Link>
-            </li>
-            <li className='nav-item'>
-                <Link className='nav-link' to='/contact' title='Contact'>
-                    Contact</Link>
-            </li>
+            {['About', 'Help', 'Contact'].map((label, i) =>
+                <li key={i} className='nav-item'>
+                    <Link className='nav-link' title={label}
+                        to={`${base}/${label.toLowerCase()}`}
+                    >
+                        {label}</Link>
+                </li>
+            )}
         </ul>
-
         <span itemScope itemType='http://schema.org/EducationalOrganization'>
             <div className='text-center'>
                 <a href='https://ctl.columbia.edu' target='_blank'
@@ -32,6 +31,5 @@ export default function Footer() {
                 </a>
             </div>
         </span>
-
     </footer>;
 };
