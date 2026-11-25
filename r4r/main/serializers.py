@@ -69,6 +69,12 @@ class RotationSerializer(serializers.HyperlinkedModelSerializer):
             context=self.context).data
 
 
+class RotationBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rotation
+        fields = ['id', 'title']
+
+
 class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
     rotations = serializers.SerializerMethodField('get_rotations')
 

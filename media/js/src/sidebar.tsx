@@ -1,22 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Avatar from './avatar';
 import BrandMark from './brandMark';
 import { authUser } from './utils';
 import CSRFToken from './csrfToken';
+import axios from 'axios';
 
 
 export default function Sidebar({unread = 0}) {
-    const { courseId } = useParams();
-
-    const PATH = window.location.pathname;
-    const INSTRUCTOR_NAV = [
+    const [rotations, setRotations] = useState([]);
+    const [navList, setNavList] = useState([
         ['Feedback', 'feedback'],
-        ['Rotation', 'rotation'],
+        [],
         ['Members', 'members'],
         ['Insights', 'insights'],
         ['About eHospital', 'about'],
-    ];
+    ]);
+
+    const { courseId } = useParams();
+    const PATH = window.location.pathname;
+
+    useEffect(() => {
+        axios.get(`/api/course/${courseId}/rotations/`)
+            .then(response => setRotations(response.data));
+    }, []);
+
+    useEffect(() => {
+        const nav = [['Feedback', 'feedback']];
+        rotations.forEach(item =>
+            nav.push([
+                `Case: ${item['title']}`, `rotation/${item['id']}`]));
+        nav.push(
+            ['Members', 'members'],
+            ['Insights', 'insights'],
+            ['About eHospital', 'about']
+        );
+        setNavList(nav);
+    }, [rotations]);
 
     return <nav
         className={`app-sidebar d-flex flex-column flex-shrink-0 p-3 sticky-top 
@@ -42,20 +62,30 @@ export default function Sidebar({unread = 0}) {
             }
         </div>
         <ul className="nav nav-pills nav-dark flex-column gap-1">
-            {INSTRUCTOR_NAV.map(([label, url], i) =>
-                <li key={i} className='nav-item'>
-                    <Link to={`/course/${courseId}/${url}`}
-                        className={`nav-link w-100 text-start d-flex 
-                            align-items-center gap-2 ${url === PATH ?
-                                'active fw-semibold' : ''}`}
+            {navList.map(([label, url], i) =>
+                label ?
+                    <li key={i} className='nav-item'>
+                        <Link to={`/course/${courseId}/${url}`}
+                            className={`nav-link w-100 text-start d-flex 
+                                align-items-center gap-2 ${url === PATH ?
+                                    'active fw-semibold' : ''}`}
+                        >
+                            {label}
+                            {url === '/base/feedback/' && unread > 0 &&
+                                <span className='badge bg-danger ms-auto'
+                                    aria-label={unread + ' unread'}
+                                >
+                                    {unread}
+                                </span>
+                            }
+                        </Link>
+                    </li>
+                    :
+                    <div className='spinner-border mx-3'
+                        role='status'
                     >
-                        {label}
-                        {url === '/base/feedback/' && unread > 0 &&
-                            <span className='badge bg-danger ms-auto'
-                                aria-label={unread + ' unread'}>{unread}</span>
-                        }
-                    </Link>
-                </li>
+                        <span className='visually-hidden'>Loading...</span>
+                    </div>
             )}
         </ul>
         <div className={`app-sidebar__footer mt-auto d-flex align-items-center 
