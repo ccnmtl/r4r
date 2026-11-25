@@ -34,7 +34,7 @@ const rotationTabs = [
 ];
 
 export const rotationRoutes = generateNestedRoute(
-    {path: 'rotation', el: <Rotation />},
+    {path: 'rotation/:rotationId', el: <Rotation />},
     rotationTabs);
 
 export default function Rotation() {

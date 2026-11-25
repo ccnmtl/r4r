@@ -10,7 +10,8 @@ from rest_framework.response import Response
 from r4r.main.mixins import IsStaffMixin
 from r4r.main.serializers import (
     CourseDetailSerializer, CourseListSerializer, RotationSerializer,
-    TeamSerializer, UserSerializer, CaseSerializer, PromptSerializer
+    TeamSerializer, UserSerializer, CaseSerializer, PromptSerializer,
+    RotationBriefSerializer
 )
 from r4r.main.permissions import (
     IsSuperuserOrReadOnlyAuth, IsStaffOrReadOnlyAuth
@@ -60,6 +61,18 @@ class CourseViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseDetailSerializer
     permission_classes = [IsSuperuserOrReadOnlyAuth]
+
+    @action(methods=['GET'], detail=True,
+            permission_classes=[IsSuperuserOrReadOnlyAuth])
+    def rotations(self, request, pk=None):
+        course = self.get_object()
+
+        #  GET instructor courses
+        rotations = Rotation.objects.filter(course=course).distinct()
+
+        serializer = RotationBriefSerializer(
+            rotations, many=True, context={'request': request})
+        return Response(serializer.data)
 
     def list(self, request):
         queryset = Course.objects.all()
